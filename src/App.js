@@ -1,16 +1,16 @@
-import logo from "./logo.svg";
-import "./App.css";
-import { ConnectWallet, useAddress } from "@thirdweb-dev/react";
+
+
+import { Route, Routes } from "react-router-dom";
+import Home from "./Pages/Home";
+import Header from "./Components/Shared/Header";
 
 function App() {
   return (
     <div className="App">
-      <ConnectWallet
-        accentColor="#f213a4"
-        colorMode="dark"
-        width={{ base: "150px", md: "unset" }}
-        style={{ background: "black", color: "white" }}
-      />
+      <Header />     
+      <Routes>
+        <Route path="/" element={<Home />}></Route>
+      </Routes>
     </div>
   );
 }
