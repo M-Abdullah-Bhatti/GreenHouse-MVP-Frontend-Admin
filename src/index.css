@@ -2,8 +2,29 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300&display=swap");
+
 body {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+  font-family: "Inter", sans-serif;
+}
+
+/* Modify the scrollbar */
+/* For WebKit-based browsers */
+/* Width and height of the scrollbar */
+.scrollbar::-webkit-scrollbar {
+  width: 10px; /* You can adjust this */
+}
+
+/* Color of the scrollbar track */
+.scrollbar::-webkit-scrollbar-track {
+  background-color: #f1f1f1; /* You can change the background color */
+}
+
+/* Style of the scrollbar thumb (the draggable part) */
+.scrollbar::-webkit-scrollbar-thumb {
+  background-color: #888; /* You can change the thumb color */
+  border-radius: 5px; /* You can round the corners */
 }
