@@ -1,16 +1,16 @@
 
 
 import { Route, Routes } from "react-router-dom";
-import Home from "./Pages/Home";
+import Reports from "./Pages/Reports";
 import Header from "./Components/Shared/Header";
 import Settings from "./Pages/Settings";
 
 function App() {
   return (
     <div className="App">
-      <Header />     
+      <Header />
       <Routes>
-        <Route path="/" element={<Home />}></Route>
+        <Route path="/" element={<Reports />}></Route>
         <Route path="/settings" element={<Settings />}></Route>
       </Routes>
     </div>
