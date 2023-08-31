@@ -1,35 +1,54 @@
 import React, { useRef, useState } from "react";
 import BackButton from "../Shared/BackButton";
+import { useStepsContext } from "../../Context/StateContext";
+import Loading from "../Shared/Loading";
 
 const Step2 = () => {
   const fileInputRef = useRef(null);
-  const [processing, setProcessing] = useState(false);
-  const [selectedFile, setSelectedFile] = useState(null);
-  const [fileProgress, setFileProgress] = useState(0);
+  const { processing, setProcessing } = useStepsContext();
+
+  const [selectedFiles, setSelectedFiles] = useState([]);
+  const [fileProgress, setFileProgress] = useState({});
 
   const handleFileChange = (event) => {
-    const selected = event.target.files[0];
-    setSelectedFile(selected);
+    const newSelectedFiles = Array.from(event.target.files);
+    setSelectedFiles([...selectedFiles, ...newSelectedFiles]);
 
-    const simulateFileUploadProgress = () => {
-      let progress = 0;
+    newSelectedFiles.forEach((file) => {
+      setFileProgress((prevProgress) => ({
+        ...prevProgress,
+        [file.name]: 0,
+      }));
 
-      const interval = setInterval(() => {
-        if (progress < 100) {
-          progress += 10;
-          setFileProgress(progress);
-        } else {
-          clearInterval(interval); // Clear the interval when progress reaches 100%
-        }
-      }, 200);
-    };
-
-    simulateFileUploadProgress();
+      simulateFileUploadProgress(file);
+    });
   };
 
-  const handleDeleteFile = () => {
-    setSelectedFile(null);
-    setFileProgress(0);
+  const simulateFileUploadProgress = (file) => {
+    let progress = 0;
+
+    const interval = setInterval(() => {
+      if (progress < 100) {
+        progress += 10;
+        setFileProgress((prevProgress) => ({
+          ...prevProgress,
+          [file.name]: progress,
+        }));
+      } else {
+        clearInterval(interval); // Clear the interval when progress reaches 100%
+      }
+    }, 200);
+  };
+
+  const handleDeleteFile = (fileName) => {
+    setSelectedFiles((prevFiles) =>
+      prevFiles.filter((file) => file.name !== fileName)
+    );
+    setFileProgress((prevProgress) => {
+      const updatedProgress = { ...prevProgress };
+      delete updatedProgress[fileName];
+      return updatedProgress;
+    });
   };
 
   const handleFileClick = () => {
@@ -39,14 +58,7 @@ const Step2 = () => {
   return (
     <>
       {processing ? (
-        <div className="flex flex-col justify-center items-center min-h-[86vh]">
-          <h1 className="text-[#000] font-bold text-4xl mb-1">
-            Please wait...
-          </h1>
-          <p className="text-[#0000007f] text-lg font-semibold mb-7">
-            Please wait, data source is being processed
-          </p>
-        </div>
+        <Loading />
       ) : (
         <div className="pb-10">
           <BackButton />
@@ -65,6 +77,7 @@ const Step2 = () => {
                   ref={fileInputRef}
                   className="hidden"
                   onChange={handleFileChange}
+                  multiple
                 />
                 <img
                   src="/assets/file_upload.svg"
@@ -74,9 +87,12 @@ const Step2 = () => {
                 />
               </div>
               {/* File Progress */}
-              {selectedFile && (
-                <div className="grid grid-cols-[70px,70%,70px] w-[75%] mx-auto rounded-xl border-[2px] border-[#E8ECEF] mt-10 p-3 justify-center">
-                  <div className=" ">
+              {selectedFiles.map((file) => (
+                <div
+                  key={file.name}
+                  className="grid grid-cols-[70px,70%,70px] w-[75%] mx-auto rounded-xl border-[2px] border-[#E8ECEF] mt-10 p-3 justify-center"
+                >
+                  <div className="">
                     <img
                       src="/assets/file.svg"
                       alt="logo"
@@ -85,32 +101,31 @@ const Step2 = () => {
                   </div>
                   <div className="">
                     <h1 className="font-semibold mb-0 text-[#000]">
-                      {selectedFile.name}
+                      {file.name}
                     </h1>
                     <p className="font-semibold mt-0 text-sm text-[#808080]">
-                      {Math.round(selectedFile.size / 1024)} KB
+                      {Math.round(file.size / 1024)} KB
                     </p>
-
                     <div className="bg-gray-200 h-3 rounded-full overflow-hidden w-full mt-2">
                       <div
                         className="bg-green-500 h-full rounded-full"
-                        style={{ width: `${fileProgress}%` }}
+                        style={{ width: `${fileProgress[file.name] || 0}%` }}
                       ></div>
                     </div>
                   </div>
-                  <div className=" ">
+                  <div className="">
                     <img
-                      onClick={handleDeleteFile}
+                      onClick={() => handleDeleteFile(file.name)}
                       src="/assets/delete.svg"
                       alt="logo"
                       className="mx-auto cursor-pointer"
                     />
                     <p className="text-center mt-2 text-base">
-                      {fileProgress}%
+                      {fileProgress[file.name] || 0}%
                     </p>
                   </div>
                 </div>
-              )}
+              ))}
               <button
                 onClick={() => setProcessing(true)}
                 className="bg-[#3FDD78] text-lg rounded-2xl mt-10 py-3 px-6 border-none outline-none text-[#fff] "

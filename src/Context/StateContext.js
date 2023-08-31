@@ -6,6 +6,7 @@ const StepsContext = createContext();
 // Create a provider component
 export function StepsProvider({ children }) {
   const [step, setStep] = useState(1);
+  const [processing, setProcessing] = useState(false);
 
   const handleNext = () => {
     setStep(step + 1);
@@ -17,7 +18,7 @@ export function StepsProvider({ children }) {
   };
 
   return (
-    <StepsContext.Provider value={{ handleNext, handlePrevious, step }}>
+    <StepsContext.Provider value={{ handleNext, handlePrevious, step, processing, setProcessing }}>
       {children}
     </StepsContext.Provider>
   );
