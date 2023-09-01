@@ -5,7 +5,7 @@ import Loading from "../Shared/Loading";
 
 const Step2 = () => {
   const fileInputRef = useRef(null);
-  const { processing, setProcessing } = useStepsContext();
+  const { processing, setProcessing, setStep } = useStepsContext();
 
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileProgress, setFileProgress] = useState({});
@@ -55,13 +55,21 @@ const Step2 = () => {
     fileInputRef.current.click();
   };
 
+  const handleFileConfirm = () => {
+    setProcessing(true);
+    setTimeout(() => {
+      setStep("all_reports");
+      setProcessing(false);
+    }, 2000);
+  };
+
   return (
     <>
       {processing ? (
-        <Loading />
+        <Loading title="Please wait, data source is being processed" />
       ) : (
         <div className="pb-10">
-          <BackButton />
+          <BackButton setStep={() => setStep("step1")} />
           <div className="grid w-full min-h-[75vh] ">
             <div className="w-1/2 mx-auto flex justify-center items-center flex-col">
               <h1 className="text-[#000] font-bold text-3xl mb-1">
@@ -127,7 +135,7 @@ const Step2 = () => {
                 </div>
               ))}
               <button
-                onClick={() => setProcessing(true)}
+                onClick={handleFileConfirm}
                 className="bg-[#3FDD78] text-lg rounded-2xl mt-10 py-3 px-6 border-none outline-none text-[#fff] "
               >
                 Confirm

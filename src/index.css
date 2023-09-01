@@ -28,3 +28,12 @@ body {
   background-color: #888; /* You can change the thumb color */
   border-radius: 5px; /* You can round the corners */
 }
+
+.custom-radio input[type="radio"] {
+  background-color: #3fdd78 !important;
+}
+
+.custom-radio input[type="radio"]:checked {
+  border-color: #3fdd78 !important;
+  background-color: #3fdd78 !important;
+}

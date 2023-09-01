@@ -5,20 +5,14 @@ const StepsContext = createContext();
 
 // Create a provider component
 export function StepsProvider({ children }) {
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState("step1");
   const [processing, setProcessing] = useState(false);
+  const [showAllReports, setShowAllReports]  = useState(false)
 
-  const handleNext = () => {
-    setStep(step + 1);
-  };
-
-  const handlePrevious = () => {
-    if (step === 1) return;
-    setStep(step - 1);
-  };
+  
 
   return (
-    <StepsContext.Provider value={{ handleNext, handlePrevious, step, processing, setProcessing }}>
+    <StepsContext.Provider value={{ step,setStep, processing, setProcessing, showAllReports, setShowAllReports }}>
       {children}
     </StepsContext.Provider>
   );

@@ -1,8 +1,10 @@
 import React, { useState } from "react";
 import { allReportsData, allReportsSentToRegulatorsData } from "../../data";
+import { useStepsContext } from "../../Context/StateContext";
 
 const AllReports = () => {
   const [activeTab, setActiveTab] = useState(1);
+  const { setStep } = useStepsContext();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -20,7 +22,10 @@ const AllReports = () => {
           </p>
         </div>
         {/* Right */}
-        <button className="bg-[#3FDD78] text-lg rounded-lg  py-3 px-3 border-none outline-none text-[#fff] ">
+        <button
+          onClick={() => setStep("step1")}
+          className="bg-[#3FDD78] text-lg rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
+        >
           Upload source file
         </button>
       </div>
@@ -64,10 +69,12 @@ const AllReports = () => {
 export default AllReports;
 
 const Report = ({ data }) => {
+  const { setStep } = useStepsContext();
   return (
     <>
       {data.map((report, index) => (
         <div
+          onClick={() => setStep("specific_report")}
           style={{
             boxShadow:
               " 0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
