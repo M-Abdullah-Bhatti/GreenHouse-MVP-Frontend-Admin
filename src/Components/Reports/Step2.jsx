@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import BackButton from "../Shared/BackButton";
 import { useStepsContext } from "../../Context/StateContext";
 import Loading from "../Shared/Loading";
+import * as XLSX from "xlsx"; // Import the xlsx library
 
 const Step2 = () => {
   const fileInputRef = useRef(null);
@@ -10,7 +11,35 @@ const Step2 = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileProgress, setFileProgress] = useState({});
 
+  const processDataFromFiles = async () => {
+    try {
+      // console.log("selectedFiles: ", selectedFiles  );
+
+      for (const file of selectedFiles) {
+        // console.log("files: ", file);
+        const reader = new FileReader();
+        reader.onload = async (e) => {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, { type: "array" });
+
+          for (const sheetName of workbook.SheetNames) {
+            const sheet = workbook.Sheets[sheetName];
+            const rows = XLSX.utils.sheet_to_json(sheet);
+
+            // Process the rows from the sheet (console.log or store the data as needed)
+            console.log(`File: ${file.name}, Sheet: ${sheetName}`);
+            console.log(rows);
+          }
+        };
+        reader.readAsArrayBuffer(file);
+      }
+    } catch (error) {
+      console.error("Error processing data:", error);
+    }
+  };
+
   const handleFileChange = (event) => {
+    console.log("Hello");
     const newSelectedFiles = Array.from(event.target.files);
     setSelectedFiles([...selectedFiles, ...newSelectedFiles]);
 
@@ -57,10 +86,11 @@ const Step2 = () => {
 
   const handleFileConfirm = () => {
     setProcessing(true);
-    setTimeout(() => {
-      setStep("all_reports");
-      setProcessing(false);
-    }, 2000);
+    processDataFromFiles();
+    // setTimeout(() => {
+    //   setStep("all_reports");
+    //   setProcessing(false);
+    // }, 2000);
   };
 
   return (
