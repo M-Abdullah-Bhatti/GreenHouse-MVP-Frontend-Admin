@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { allReportsData, allReportsSentToRegulatorsData } from "../../data";
 import { useStepsContext } from "../../Context/StateContext";
 
 const AllReports = () => {
   const [activeTab, setActiveTab] = useState(1);
-  const { setStep } = useStepsContext();
+  const [data, setData] = useState([]);
+
+  const { setStep, rows } = useStepsContext();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);

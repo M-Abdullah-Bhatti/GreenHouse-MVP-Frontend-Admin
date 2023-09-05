@@ -6,7 +6,8 @@ import * as XLSX from "xlsx"; // Import the xlsx library
 
 const Step2 = () => {
   const fileInputRef = useRef(null);
-  const { processing, setProcessing, setStep } = useStepsContext();
+  const { processing, setProcessing, setStep, rows, setRows } =
+    useStepsContext();
 
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileProgress, setFileProgress] = useState({});
@@ -28,7 +29,8 @@ const Step2 = () => {
 
             // Process the rows from the sheet (console.log or store the data as needed)
             console.log(`File: ${file.name}, Sheet: ${sheetName}`);
-            console.log(rows);
+            console.log(typeof rows);
+            setRows(rows);
           }
         };
         reader.readAsArrayBuffer(file);
@@ -87,10 +89,10 @@ const Step2 = () => {
   const handleFileConfirm = () => {
     setProcessing(true);
     processDataFromFiles();
-    // setTimeout(() => {
-    //   setStep("all_reports");
-    //   setProcessing(false);
-    // }, 2000);
+    setTimeout(() => {
+      setStep("all_reports");
+      setProcessing(false);
+    }, 2000);
   };
 
   return (

@@ -7,12 +7,22 @@ const StepsContext = createContext();
 export function StepsProvider({ children }) {
   const [step, setStep] = useState("step1");
   const [processing, setProcessing] = useState(false);
-  const [showAllReports, setShowAllReports]  = useState(false)
-
-  
+  const [showAllReports, setShowAllReports] = useState(false);
+  const [rows, setRows] = useState();
 
   return (
-    <StepsContext.Provider value={{ step,setStep, processing, setProcessing, showAllReports, setShowAllReports }}>
+    <StepsContext.Provider
+      value={{
+        step,
+        setStep,
+        processing,
+        setProcessing,
+        showAllReports,
+        setShowAllReports,
+        rows,
+        setRows,
+      }}
+    >
       {children}
     </StepsContext.Provider>
   );
