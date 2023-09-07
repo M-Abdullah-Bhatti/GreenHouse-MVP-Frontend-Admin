@@ -5,12 +5,35 @@ import { useStepsContext } from "../../Context/StateContext";
 const AllReports = () => {
   const [activeTab, setActiveTab] = useState(1);
   const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
 
   const { setStep, rows } = useStepsContext();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
+  useEffect(() => {
+    const loadData = () => {
+      let newFilteredData = [];
+      rows.forEach((item) => {
+        // Check if item.Company is already present in newFilteredData
+        const isPresent = newFilteredData.some(
+          (jack) => jack.Company === item.Company
+        );
+
+        if (!isPresent) {
+          // If it's not present, push it into newFilteredData
+          newFilteredData.push(item);
+        }
+      });
+
+      // Update the state
+      setFilteredData(newFilteredData);
+      console.log("filteredData: ", newFilteredData);
+    };
+    loadData();
+  }, []);
 
   return (
     <div className="w-[90%] mx-auto my-10">
@@ -59,7 +82,9 @@ const AllReports = () => {
       {/* Reports Container */}
       <div className="w-full gap-7 grid grid-cols-3">
         {activeTab === 1 ? (
-          <Report data={allReportsData} />
+          // <Report data={allReportsData} />
+
+          <Report data={filteredData} />
         ) : (
           <Report data={allReportsSentToRegulatorsData} />
         )}
@@ -83,14 +108,14 @@ const Report = ({ data }) => {
           }}
           className="min-w-[31%] p-4 cursor-pointer rounded-xl hover:border-[1px] hover:border-black  "
         >
-          <p className="mb-2 text-sm text-[#6C7275]">{report.date}</p>
+          <p className="mb-2 text-sm text-[#6C7275]">{report.year}</p>
           <h1 className="mb-3 text-[#000] text-xl font-semibold">
-            {report.companyName}
+            {report.Company}
           </h1>
           <p className="text-[#6C7275] text-base">
             Jurisdiction :
             <span className="text-[#000] font-semibold ml-2">
-              {report.jurisdiction}
+              {report.Report}
             </span>
           </p>
         </div>
