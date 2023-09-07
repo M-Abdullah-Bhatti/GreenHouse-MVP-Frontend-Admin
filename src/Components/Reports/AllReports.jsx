@@ -96,12 +96,48 @@ const AllReports = () => {
 export default AllReports;
 
 const Report = ({ data }) => {
-  const { setStep } = useStepsContext();
+  const { setStep, rows, setCurrentCountry, setDescription } =
+    useStepsContext();
+
+  const handleNavigate = async (report) => {
+    console.log("report: ", report);
+
+    // Filter all the records that match the Company of the clicked report
+    const filteredRecords = rows.filter(
+      (row) => row.Company === report.Company
+    );
+
+    console.log("Filtered records: ", filteredRecords);
+
+    // Initialize an empty array to store all text
+    let allText = [];
+
+    // Assuming that your records have a 'text' field
+    filteredRecords.forEach((record) => {
+      console.log("=", record.text);
+      if (record.text) {
+        allText.push(record.text);
+      }
+    });
+
+    console.log("allText: ", allText);
+    // Convert the array of text into a single string
+    const paragraphText = allText.join(" ");
+
+    console.log("Paragraph text: ", paragraphText);
+    // Now you can navigate or do something with these filtered records
+
+    setCurrentCountry(report.Company);
+    setDescription(paragraphText);
+    setStep("specific_report");
+  };
+
   return (
     <>
       {data.map((report, index) => (
         <div
-          onClick={() => setStep("specific_report")}
+          // onClick={() => setStep("specific_report")}
+          onClick={() => handleNavigate(report)}
           style={{
             boxShadow:
               " 0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",

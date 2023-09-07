@@ -5,13 +5,13 @@ const StepsContext = createContext();
 
 // Create a provider component
 export function StepsProvider({ children }) {
-  const [openLoginModal, setOpenLoginModal] = useState(false)
+  const [openLoginModal, setOpenLoginModal] = useState(false);
   const [step, setStep] = useState("step1");
   const [processing, setProcessing] = useState(false);
   const [showAllReports, setShowAllReports] = useState(false);
   const [rows, setRows] = useState();
-
-  
+  const [currentCountry, setCurrentCountry] = useState();
+  const [description, setDescription] = useState();
 
   return (
     <StepsContext.Provider
@@ -26,6 +26,10 @@ export function StepsProvider({ children }) {
         setShowAllReports,
         rows,
         setRows,
+        currentCountry,
+        setCurrentCountry,
+        description,
+        setDescription,
       }}
     >
       {children}

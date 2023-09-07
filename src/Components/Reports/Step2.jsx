@@ -12,31 +12,70 @@ const Step2 = () => {
   const [selectedFiles, setSelectedFiles] = useState([]);
   const [fileProgress, setFileProgress] = useState({});
 
+  // const processDataFromFiles = async () => {
+  //   try {
+  //     // console.log("selectedFiles: ", selectedFiles  );
+
+  //     for (const file of selectedFiles) {
+  //       // console.log("files: ", file);
+  //       const reader = new FileReader();
+  //       reader.onload = async (e) => {
+  //         const data = new Uint8Array(e.target.result);
+  //         const workbook = XLSX.read(data, { type: "array" });
+
+  //         for (const sheetName of workbook.SheetNames) {
+  //           const sheet = workbook.Sheets[sheetName];
+  //           const rows = XLSX.utils.sheet_to_json(sheet);
+
+  //           // Process the rows from the sheet (console.log or store the data as needed)
+  //           console.log(`File: ${file.name}, Sheet: ${sheetName}`);
+  //           console.log("===", rows);
+  //           setRows(rows);
+  //         }
+  //       };
+  //       reader.readAsArrayBuffer(file);
+  //     }
+  //   } catch (error) {
+  //     console.error("Error processing data:", error);
+  //   }
+  // };
+
   const processDataFromFiles = async () => {
     try {
-      // console.log("selectedFiles: ", selectedFiles  );
+      let allRows = []; // Initialize an empty array to store all rows from all sheets and files
 
       for (const file of selectedFiles) {
-        // console.log("files: ", file);
         const reader = new FileReader();
-        reader.onload = async (e) => {
-          const data = new Uint8Array(e.target.result);
-          const workbook = XLSX.read(data, { type: "array" });
+        const promise = new Promise((resolve, reject) => {
+          reader.onload = async (e) => {
+            try {
+              const data = new Uint8Array(e.target.result);
+              const workbook = XLSX.read(data, { type: "array" });
 
-          for (const sheetName of workbook.SheetNames) {
-            const sheet = workbook.Sheets[sheetName];
-            const rows = XLSX.utils.sheet_to_json(sheet);
+              for (const sheetName of workbook.SheetNames) {
+                const sheet = workbook.Sheets[sheetName];
+                const rows = XLSX.utils.sheet_to_json(sheet);
 
-            // Process the rows from the sheet (console.log or store the data as needed)
-            console.log(`File: ${file.name}, Sheet: ${sheetName}`);
-            console.log(typeof rows);
-            setRows(rows);
-          }
-        };
+                // Process the rows from the sheet (console.log or store the data as needed)
+                console.log(`File: ${file.name}, Sheet: ${sheetName}`);
+                console.log("===", rows);
+
+                allRows = [...allRows, ...rows]; // Accumulate rows
+              }
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          };
+        });
+
         reader.readAsArrayBuffer(file);
+        await promise; // Wait for each file to be processed before moving to the next
       }
-    } catch (error) {
-      console.error("Error processing data:", error);
+
+      setRows(allRows); // Set all rows at once after all files have been processed
+    } catch (err) {
+      console.log("err: ", err);
     }
   };
 

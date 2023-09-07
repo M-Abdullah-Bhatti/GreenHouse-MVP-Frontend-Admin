@@ -1,15 +1,37 @@
-import React, { useRef } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import BackButton from "../Shared/BackButton";
 import { useStepsContext } from "../../Context/StateContext";
 import { useReactToPrint } from "react-to-print";
-
+import axios from "axios";
 const SpecificReport = () => {
-  const { setStep } = useStepsContext();
-
+  const { setStep, currentCountry, description } = useStepsContext();
+  const [predict, setPredict] = useState();
   const printRef = useRef();
   const handlePrintReport = useReactToPrint({
     content: () => printRef.current,
   });
+
+  useEffect(() => {
+    const loadData = () => {
+      try {
+        console.log("yess");
+
+        const response = axios
+          .post("http://localhost:5000/api/gpt/prompt", {
+            targetCompanyName: currentCountry,
+            description: description,
+          })
+          .then((res) => {
+            console.log("respoonse: ", res);
+            setPredict(res.data.response);
+          })
+          .catch((err) => console.log("err: ", err));
+      } catch (error) {
+        console.log("error: ", error);
+      }
+    };
+    loadData();
+  }, []);
 
   return (
     <div>
@@ -28,7 +50,9 @@ const SpecificReport = () => {
           <p className="mb-2 text-sm text-[#2c2d2e] font-semibold">
             Aug, 24, 2023
           </p>
-          <h1 className="mb-5 text-[#000] text-2xl font-bold">A/B Group PLC</h1>
+          <h1 className="mb-5 text-[#000] text-2xl font-bold">
+            {currentCountry}
+          </h1>
           <p className="text-[#6C7275] text-base mb-1 font-semibold">
             Jurisdiction :
             <span className="text-[#000] font-semibold ml-2">Ireland</span>
@@ -45,12 +69,7 @@ const SpecificReport = () => {
         {/* Verdict */}
         <div className="bg-[#F3F5F7] p-3 rounded-md mb-7">
           <p className="text-[#6C7275] mb-3 font-semibold">Verdict:</p>
-          <p className="font-semibold">
-            A/B Group PLC provide contradictory statements as it claim to be
-            green, carbon-neutral or Net Zero by 2030. The three concepts are
-            either ambiguous (i.e. green) or contradictory, as the scope of Net
-            Zero differs from the one of carbon neutral.
-          </p>
+          <p className="font-semibold">{predict}</p>
         </div>
 
         {/* Stats */}
