@@ -1,13 +1,21 @@
-import React from "react";
+import React, { useRef } from "react";
 import BackButton from "../Shared/BackButton";
 import { useStepsContext } from "../../Context/StateContext";
+import { useReactToPrint } from "react-to-print";
 
 const SpecificReport = () => {
   const { setStep } = useStepsContext();
+
+  const printRef = useRef();
+  const handlePrintReport = useReactToPrint({
+    content: () => printRef.current,
+  });
+
   return (
     <div>
       <BackButton setStep={() => setStep("all_reports")} />
       <div
+        ref={printRef}
         style={{
           boxShadow:
             "0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
@@ -80,7 +88,10 @@ const SpecificReport = () => {
           </div>
           {/* Buttons */}
           <div className="flex gap-3 mb-8">
-            <button className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] ">
+            <button
+              onClick={handlePrintReport}
+              className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
+            >
               Send to regulator
             </button>
 
