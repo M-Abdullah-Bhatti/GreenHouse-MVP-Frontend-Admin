@@ -17,7 +17,7 @@ const SpecificReport = () => {
         console.log("yess");
 
         const response = axios
-          .post("http://localhost:5000/api/gpt/prompt", {
+          .post("https://vast-rose-bonobo-tux.cyclic.cloud/api/gpt/prompt", {
             targetCompanyName: currentCountry,
             description: description,
           })

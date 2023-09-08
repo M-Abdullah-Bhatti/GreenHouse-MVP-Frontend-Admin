@@ -20,7 +20,7 @@ const Login = () => {
       onSubmit: async (values) => {
         try {
           const { data } = await axios.post(
-            "http://localhost:5000/api/regulator/login",
+            "https://vast-rose-bonobo-tux.cyclic.cloud/api/regulator/login",
             values
           );
 
