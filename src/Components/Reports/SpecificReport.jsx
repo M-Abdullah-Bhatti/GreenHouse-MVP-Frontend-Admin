@@ -2,14 +2,77 @@ import React, { useRef, useEffect, useState } from "react";
 import BackButton from "../Shared/BackButton";
 import { useStepsContext } from "../../Context/StateContext";
 import { useReactToPrint } from "react-to-print";
+import { create } from "ipfs-http-client";
 import axios from "axios";
+import { toast } from "react-toastify";
+import { smartContract } from "../../Constants";
+import { ethers } from "ethers";
+
+// IPFS
+const projectId = "2V6620s2FhImATdUuY4dwIAqoI0";
+const projectSecret = "2dcb0a633ee912e06834a43a3083248e";
+
+const auth =
+  "Basic " + Buffer.from(projectId + ":" + projectSecret).toString("base64");
+
+const ipfs = create({
+  host: "ipfs.infura.io",
+  port: 5001,
+  protocol: "https",
+  headers: {
+    authorization: auth,
+  },
+});
+
+// ----------------------------
 const SpecificReport = () => {
   const { setStep, currentCountry, description } = useStepsContext();
   const [predict, setPredict] = useState();
+  // Print Report
   const printRef = useRef();
+  const [hash, setHash] = useState("");
+  const [etherscanURL, setEtherscanURL] = useState("");
+  const [uploadReport, setUploadReport] = useState("");
+
   const handlePrintReport = useReactToPrint({
     content: () => printRef.current,
   });
+
+  // Function to upload report to blockchain
+  const handleReportUpload = async () => {
+    try {
+      if (!uploadReport) {
+        toast.error("Please select a report to upload.");
+        return;
+      }
+
+      // Adding our file to ipfs
+      const added = await ipfs.add(uploadReport);
+      let reportHash = added.path;
+      console.log("certificateHash: ", reportHash);
+      setHash(reportHash);
+
+      // Making connection to the blockchain, getting signer wallet address and connecting to our smart contract
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        smartContract.address,
+        smartContract.abi,
+        signer
+      );
+
+      // calling our smart contract function
+      const tx = await contract.addImageHash(reportHash);
+      const receipt = await tx.wait();
+      const txHash = receipt.transactionHash;
+      const etherscanUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
+      setEtherscanURL(etherscanUrl);
+    } catch (error) {
+      toast.error(error.message);
+    }
+  };
+
+  // GPT Response
 
   useEffect(() => {
     const loadData = () => {
@@ -31,11 +94,13 @@ const SpecificReport = () => {
       }
     };
     loadData();
-  }, []);
+  }, [currentCountry, description]);
 
   return (
     <div>
       <BackButton setStep={() => setStep("all_reports")} />
+
+      {/* Specific Report */}
       <div
         ref={printRef}
         style={{
@@ -108,7 +173,7 @@ const SpecificReport = () => {
           {/* Buttons */}
           <div className="flex gap-3 mb-8">
             <button
-              onClick={handlePrintReport}
+              // onClick={handlePrintReport}
               className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
             >
               Send to regulator
@@ -119,6 +184,32 @@ const SpecificReport = () => {
             </button>
           </div>
           <hr className="bg-[#E8ECEF]" />
+        </div>
+
+        {/* Links */}
+        <div className="my-5">
+          {hash && (
+            <>
+              <p className="mb-1 text-sm">
+                <span className="font-bold"> Hash: </span>
+                <a
+                  href={`https://gateway.pinata.cloud/ipfs/${hash}`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  {" "}
+                  {hash}
+                </a>
+              </p>
+              <p className="text-sm">
+                <span className="font-bold"> Etherscan URL: </span>
+                <a href={etherscanURL} target="_blank" rel="noreferrer">
+                  {" "}
+                  {etherscanURL}{" "}
+                </a>
+              </p>
+            </>
+          )}
         </div>
 
         {/* Claims */}
@@ -136,6 +227,48 @@ const SpecificReport = () => {
             Data source:
             <span className="text-[#000] font-semibold ml-2">Twitter</span>
           </p>
+        </div>
+      </div>
+
+      {/* Upload Report */}
+      <div
+        style={{
+          boxShadow:
+            "0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
+        }}
+        className="w-[80%] mx-auto my-10 p-5 rounded-xl"
+      >
+        <h1>
+          <span>Note: </span>To upload a report to IPFS first download the
+          report then upload that report to IPFS
+        </h1>
+        <div className="my-10">
+          <h1 className="font-bold mb-2">Step 1:</h1>
+          <button
+            onClick={handlePrintReport}
+            className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
+          >
+            Download Report
+          </button>
+        </div>
+
+        <div>
+          <h1 className="mb-2 font-bold">Step 2:</h1>
+          <div className="mb-5">
+            <input
+              type="file"
+              // className="bg-gray-300 w-60 h-20 rounded-lg cursor-pointer"
+              className="bg-[#3FDD78]-500 hover:bg-[#3FDD78]-900 text-white py-2 px-4 rounded-lg cursor-pointer inline-block"
+              onChange={(e) => setUploadReport(e.target.files[0])}
+            />
+          </div>
+
+          <button
+            onClick={handleReportUpload}
+            className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
+          >
+            Upload Report to IPFS
+          </button>
         </div>
       </div>
     </div>

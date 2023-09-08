@@ -1,3 +1,4 @@
+/* eslint-disable no-loop-func */
 import React, { useRef, useState } from "react";
 import BackButton from "../Shared/BackButton";
 import { useStepsContext } from "../../Context/StateContext";
