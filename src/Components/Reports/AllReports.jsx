@@ -1,17 +1,40 @@
 import React, { useEffect, useState } from "react";
 import { allReportsData, allReportsSentToRegulatorsData } from "../../data";
 import { useStepsContext } from "../../Context/StateContext";
+import axios from "axios";
 
 const AllReports = () => {
   const [activeTab, setActiveTab] = useState(1);
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
+  const [reportsSentToRegulators, setReportsSentToRegulators] = useState([]);
+  console.log("================");
+  console.log(reportsSentToRegulators);
+  // console.log(filteredData);
 
   const { setStep, rows } = useStepsContext();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
+
+  // FetchingAllReportsSentToRegulators
+  useEffect(() => {
+    const fetchReportsSentToRegulators = async () => {
+      axios
+        .get(
+          "https://vast-rose-bonobo-tux.cyclic.cloud/api/report/getUpdateSendToRegulators"
+        )
+        .then((response) => {
+          setReportsSentToRegulators(response?.data?.results);
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error);
+        });
+    };
+
+    fetchReportsSentToRegulators();
+  }, []);
 
   useEffect(() => {
     const loadData = () => {
@@ -30,7 +53,7 @@ const AllReports = () => {
 
       // Update the state
       setFilteredData(newFilteredData);
-      console.log("filteredData: ", newFilteredData);
+      // console.log("filteredData: ", newFilteredData);
     };
     loadData();
   }, []);
@@ -84,9 +107,9 @@ const AllReports = () => {
         {activeTab === 1 ? (
           // <Report data={allReportsData} />
 
-          <Report data={filteredData} />
+          <Report data={filteredData} activeTab={1} />
         ) : (
-          <Report data={allReportsSentToRegulatorsData} />
+          <Report data={reportsSentToRegulators} activeTab={2} />
         )}
       </div>
     </div>
@@ -95,11 +118,12 @@ const AllReports = () => {
 
 export default AllReports;
 
-const Report = ({ data }) => {
+const Report = ({ data, activeTab }) => {
   const { setStep, rows, setCurrentCountry, setDescription } =
     useStepsContext();
 
   const handleNavigate = async (report) => {
+    setCurrentCountry(report);
     console.log("report: ", report);
 
     // // Filter all the records that match the Company of the clicked report
@@ -134,28 +158,49 @@ const Report = ({ data }) => {
 
   return (
     <>
-      {data.map((report, index) => (
-        <div
-          // onClick={() => setStep("specific_report")}
-          onClick={() => handleNavigate(report)}
-          style={{
-            boxShadow:
-              " 0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
-          }}
-          className="min-w-[31%] p-4 cursor-pointer rounded-xl hover:border-[1px] hover:border-black  "
-        >
-          <p className="mb-2 text-sm text-[#6C7275]">{report.year}</p>
-          <h1 className="mb-3 text-[#000] text-xl font-semibold">
-            {report.Company}
-          </h1>
-          <p className="text-[#6C7275] text-base">
-            Jurisdiction :
-            <span className="text-[#000] font-semibold ml-2">
-              {report.Jurisdiction}
-            </span>
-          </p>
-        </div>
-      ))}
+      {data.map((report, index) =>
+        activeTab === 1 ? (
+          <div
+            // onClick={() => setStep("specific_report")}
+            onClick={() => handleNavigate(report)}
+            style={{
+              boxShadow:
+                " 0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
+            }}
+            className="min-w-[31%] p-4 cursor-pointer rounded-xl hover:border-[1px] hover:border-black  "
+          >
+            <p className="mb-2 text-sm text-[#6C7275]">{report.year}</p>
+            <h1 className="mb-3 text-[#000] text-xl font-semibold">
+              {report.Company}
+            </h1>
+            <p className="text-[#6C7275] text-base">
+              Jurisdiction :
+              <span className="text-[#000] font-semibold ml-2">
+                {report.Jurisdiction}
+              </span>
+            </p>
+          </div>
+        ) : (
+          <div
+            // onClick={() => setStep("specific_report")}
+            onClick={() => handleNavigate(report.companyName)}
+            style={{
+              boxShadow:
+                " 0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
+            }}
+            className="min-w-[31%] p-4 cursor-pointer rounded-xl hover:border-[1px] hover:border-black  "
+          >
+            <p className="mb-2 text-sm text-[#6C7275]">{report?.year}</p>
+            <h1 className="mb-3 text-[#000] text-xl font-semibold">
+              {report.companyName}
+            </h1>
+            <p className="text-[#6C7275] text-base">
+              Jurisdiction :
+              <span className="text-[#000] font-semibold ml-2">Ireland</span>
+            </p>
+          </div>
+        )
+      )}
     </>
   );
 };

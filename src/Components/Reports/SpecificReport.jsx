@@ -72,6 +72,24 @@ const SpecificReport = () => {
     }
   };
 
+  // Function to update report status
+  const handleSendToRegulators = () => {
+    axios
+      .post(
+        "https://vast-rose-bonobo-tux.cyclic.cloud/api/report/updateSendToRegulators",
+        {
+          companyName: currentCountry,
+        }
+      )
+      .then(() => {
+        toast.success("Report sent to regulator");
+        setStep("all_reports");
+      })
+      .catch(() => {
+        toast.error("Something went wrong");
+      });
+  };
+
   // GPT Response
 
   useEffect(() => {
@@ -92,8 +110,9 @@ const SpecificReport = () => {
       // } catch (error) {
       //   console.log("error: ", error);
       // }
-      let data = " A/B Group PLC provide contradictory statements as it claim to be green, carbon-neutral or Net Zero by 2030. The three concepts are either ambiguous (i.e. green) or contradictory, as the scope of Net Zero differs from the one of carbon neutral."
-      setPredict(data)
+      let data =
+        " A/B Group PLC provide contradictory statements as it claim to be green, carbon-neutral or Net Zero by 2030. The three concepts are either ambiguous (i.e. green) or contradictory, as the scope of Net Zero differs from the one of carbon neutral.";
+      setPredict(data);
     };
     loadData();
   }, [currentCountry, description]);
@@ -175,7 +194,7 @@ const SpecificReport = () => {
           {/* Buttons */}
           <div className="flex gap-3 mb-8">
             <button
-              // onClick={handlePrintReport}
+              onClick={handleSendToRegulators}
               className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
             >
               Send to regulator
