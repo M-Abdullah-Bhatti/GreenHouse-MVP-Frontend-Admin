@@ -102,33 +102,33 @@ const Report = ({ data }) => {
   const handleNavigate = async (report) => {
     console.log("report: ", report);
 
-    // Filter all the records that match the Company of the clicked report
-    const filteredRecords = rows.filter(
-      (row) => row.Company === report.Company
-    );
+    // // Filter all the records that match the Company of the clicked report
+    // const filteredRecords = rows.filter(
+    //   (row) => row.Company === report.Company
+    // );
 
-    console.log("Filtered records: ", filteredRecords);
+    // console.log("Filtered records: ", filteredRecords);
 
-    // Initialize an empty array to store all text
-    let allText = [];
+    // // Initialize an empty array to store all text
+    // let allText = [];
 
-    // Assuming that your records have a 'text' field
-    filteredRecords.forEach((record) => {
-      console.log("=", record.text);
-      if (record.text) {
-        allText.push(record.text);
-      }
-    });
+    // // Assuming that your records have a 'text' field
+    // filteredRecords.forEach((record) => {
+    //   console.log("=", record.text);
+    //   if (record.text) {
+    //     allText.push(record.text);
+    //   }
+    // });
 
-    console.log("allText: ", allText);
-    // Convert the array of text into a single string
-    const paragraphText = allText.join(" ");
+    // console.log("allText: ", allText);
+    // // Convert the array of text into a single string
+    // const paragraphText = allText.join(" ");
 
-    console.log("Paragraph text: ", paragraphText);
-    // Now you can navigate or do something with these filtered records
+    // console.log("Paragraph text: ", paragraphText);
+    // // Now you can navigate or do something with these filtered records
 
-    setCurrentCountry(report.Company);
-    setDescription(paragraphText);
+    // setCurrentCountry(report.Company);
+    // setDescription(paragraphText);
     setStep("specific_report");
   };
 
@@ -151,7 +151,7 @@ const Report = ({ data }) => {
           <p className="text-[#6C7275] text-base">
             Jurisdiction :
             <span className="text-[#000] font-semibold ml-2">
-              {report.Report}
+              {report.Jurisdiction}
             </span>
           </p>
         </div>
