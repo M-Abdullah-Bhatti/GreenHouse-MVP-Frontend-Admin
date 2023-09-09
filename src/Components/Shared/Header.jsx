@@ -1,11 +1,9 @@
 import { ConnectWallet } from "@thirdweb-dev/react";
 import { Link } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { useStepsContext } from "../../Context/StateContext";
 
 const Header = () => {
   const location = useLocation();
-  const { openLoginModal, setOpenLoginModal } = useStepsContext();
 
   return (
     <div className="bg-black">
@@ -42,13 +40,6 @@ const Header = () => {
             colorMode="dark"
             width={{ base: "150px", md: "unset" }}
             style={{ background: "#3FDD78", color: "white" }}
-          />
-
-          <img
-            src="./assets/profile.png"
-            alt="logo"
-            className="cursor-pointer"
-            onClick={() => setOpenLoginModal(!openLoginModal)}
           />
         </div>
       </div>
