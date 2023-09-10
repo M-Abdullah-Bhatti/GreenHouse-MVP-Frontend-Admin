@@ -12,9 +12,21 @@ export function StepsProvider({ children }) {
   const [currentCountry, setCurrentCountry] = useState();
   const [description, setDescription] = useState();
 
+
+  
+  const [specificData, setSpecificData] = useState({
+    jurisdiction: "",
+    prediction: "",
+    claims: [],
+    hash:"",
+    etherscanURL:""
+  });
+
   return (
     <StepsContext.Provider
       value={{
+        specificData,
+        setSpecificData,
         step,
         setStep,
         processing,

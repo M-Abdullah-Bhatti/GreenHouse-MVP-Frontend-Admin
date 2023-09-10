@@ -138,7 +138,10 @@ const Step2 = () => {
   return (
     <>
       {processing ? (
-        <Loading title="Please wait, data source is being processed" />
+        <Loading
+          status="Please wait..."
+          title="Please wait, data source is being processed"
+        />
       ) : (
         <div className="pb-10">
           <BackButton setStep={() => setStep("step1")} />

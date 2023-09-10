@@ -119,40 +119,54 @@ const AllReports = () => {
 export default AllReports;
 
 const Report = ({ data, activeTab }) => {
-  const { setStep, rows, setCurrentCountry, setDescription } =
-    useStepsContext();
+  const {
+    setStep,
+    rows,
+    setCurrentCountry,
+    setDescription,
+    setSpecificData,
+    specificData,
+  } = useStepsContext();
 
   const handleNavigate = async (report) => {
     setCurrentCountry(report);
-    console.log("report: ", report);
 
-    // // Filter all the records that match the Company of the clicked report
-    // const filteredRecords = rows.filter(
-    //   (row) => row.Company === report.Company
-    // );
+    if (report === "AIB group plc") {
+      const updatedData = {
+        ...specificData,
+        jurisdiction: "Ireland",
+        prediction:
+          "AIB Group PLC provides contradictory statements as it claim to be green, carbon-neutral or Net Zero by 2030. The three concepts are either ambiguous (i.e. green) or contradictory, as the scope of Net Zero differs from the one of carbon neutral.",
+        priority: "High",
+        claims: [
+          "In 2020 we announced our target of Net Zero in our operations by 2030.",
+          "In 2019 we made €5 b available for green projects and last year we set a target for 70% of our lending to be green by 2030. We also became the first Irish bank to pledge to operate as carbon neutral by 2030.",
+        ],
+        hash: "QmNSM4xN1z1EXjDLn3y54YonPqrpa5gGtZG7XWiegHqxii",
+        etherscanURL:
+          "https://sepolia.etherscan.io/tx/0x2375fa70178934ff5dba2a1ce87405641524cb64dd5ab2f34c8d2bc1895cd901",
+      };
+      setSpecificData(updatedData);
+    }
 
-    // console.log("Filtered records: ", filteredRecords);
+    if (report === "Bank of America") {
+      const updatedData = {
+        ...specificData,
+        jurisdiction: "USA",
+        prediction:
+          "In the Sustainability Report, it is stated that Bank of America achieved carbon neutrality for its operations in 2019. However, in Twitter, there is a tweet from 2021 mentioning the goal of transitioning to a low-carbon economy, suggesting that carbon neutrality may not have been achieved by 2021.  The Sustainability Report mentions that Bank of America joined the Net-Zero Banking Alliance (NZBA) in 2021, but there is no mention of this in Twitter or Carbon offsets sheets. In the Sustainability Report sheet, it is stated that Bank of America achieved its 100% renewable electricity goal in 2019. However, there is no mention of this in the Twitter or Carbon offsets sheets.",
+        priority: "Medium",
+        claims: [
+          "We achieved carbon neutrality and our 100% renewable electricity goal in 2019.",
+          "Transitioning to a low-carbon economy is essential, but it's crucial to stay realistic. Achieving carbon neutrality by 2021 might be a challenging goal. Let's keep working towards a greener future!",
+        ],
+        hash: "QmWX2Y31vu94XquQsgjzEdXpDtT4fnJZKETxM2fEseoWiU",
+        etherscanURL:
+          "https://sepolia.etherscan.io/tx/0x475fca847e2b37be5ee38c94761573f13ce723f7288a8e636a199a03f7fa5e7c",
+      };
+      setSpecificData(updatedData);
+    }
 
-    // // Initialize an empty array to store all text
-    // let allText = [];
-
-    // // Assuming that your records have a 'text' field
-    // filteredRecords.forEach((record) => {
-    //   console.log("=", record.text);
-    //   if (record.text) {
-    //     allText.push(record.text);
-    //   }
-    // });
-
-    // console.log("allText: ", allText);
-    // // Convert the array of text into a single string
-    // const paragraphText = allText.join(" ");
-
-    // console.log("Paragraph text: ", paragraphText);
-    // // Now you can navigate or do something with these filtered records
-
-    // setCurrentCountry(report.Company);
-    // setDescription(paragraphText);
     setStep("specific_report");
   };
 
