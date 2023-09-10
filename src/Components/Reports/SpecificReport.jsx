@@ -213,7 +213,7 @@ const SpecificReport = () => {
               </div>
 
               {/* Links */}
-              <div className="my-5">
+              {/* <div className="my-5">
                 {hash && (
                   <>
                     <p className="mb-1 text-sm">
@@ -236,7 +236,7 @@ const SpecificReport = () => {
                     </p>
                   </>
                 )}
-              </div>
+              </div> */}
 
               {/* Claims */}
               <div>
@@ -272,7 +272,7 @@ const SpecificReport = () => {
             </div>
 
             {/* Upload Report */}
-            <div
+            {/* <div
               style={{
                 boxShadow:
                   "0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
@@ -311,7 +311,7 @@ const SpecificReport = () => {
                   Upload Report to IPFS
                 </button>
               </div>
-            </div>
+            </div> */}
           </div>
         </>
       )}

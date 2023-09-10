@@ -14,9 +14,9 @@ const AllReports = () => {
 
   const { setStep, rows } = useStepsContext();
 
-  const handleTabClick = (tab) => {
-    setActiveTab(tab);
-  };
+  // const handleTabClick = (tab) => {
+  //   setActiveTab(tab);
+  // };
 
   // FetchingAllReportsSentToRegulators
   useEffect(() => {
@@ -81,7 +81,7 @@ const AllReports = () => {
       {/* Tabs Container */}
       <div className="flex gap-10 w-fit justify-center item-center mb-8">
         <h1
-          onClick={() => handleTabClick(1)}
+          // onClick={() => handleTabClick(1)}
           className={`cursor-pointer ${
             activeTab === 1
               ? "border-b-[2px] border-[#3FDD78] text-[#000] font-semibold"
@@ -90,8 +90,8 @@ const AllReports = () => {
         >
           All reports
         </h1>
-        <h1
-          onClick={() => handleTabClick(2)}
+        {/* <h1
+          // onClick={() => handleTabClick(2)}
           className={`cursor-pointer ${
             activeTab === 2
               ? "border-b-[2px] border-[#3FDD78] text-[#000] font-semibold"
@@ -99,7 +99,7 @@ const AllReports = () => {
           }  pb-1 `}
         >
           Sent to regulator
-        </h1>
+        </h1> */}
       </div>
 
       {/* Reports Container */}
