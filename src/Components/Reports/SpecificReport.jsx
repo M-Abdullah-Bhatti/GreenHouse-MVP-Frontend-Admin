@@ -38,7 +38,7 @@ const SpecificReport = () => {
   // Print Report
   const printRef = useRef();
   const [hash, setHash] = useState("");
-  const [etherscanURL, setEtherscanURL] = useState("");
+  // const [etherscanURL, setEtherscanURL] = useState("");
   const [uploadReport, setUploadReport] = useState("");
 
   const handlePrintReport = useReactToPrint({
@@ -71,9 +71,9 @@ const SpecificReport = () => {
       // calling our smart contract function
       const tx = await contract.addImageHash(reportHash);
       const receipt = await tx.wait();
-      const txHash = receipt.transactionHash;
-      const etherscanUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
-      setEtherscanURL(etherscanUrl);
+      // const txHash = receipt.transactionHash;
+      // const etherscanUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
+      // setEtherscanURL(etherscanUrl);
     } catch (error) {
       toast.error(error.message);
     }

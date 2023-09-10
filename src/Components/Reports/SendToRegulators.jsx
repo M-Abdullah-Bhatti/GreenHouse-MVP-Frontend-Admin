@@ -66,7 +66,7 @@ const SendToRegulators = () => {
                 "QmWX2Y31vu94XquQsgjzEdXpDtT4fnJZKETxM2fEseoWiU"}
             </a>
           </p>
-          <p className="text-[#6C7275] text-base font-semibold">
+          {/* <p className="text-[#6C7275] text-base font-semibold">
             <span className="font-bold"> Etherscan URL: </span>
             <a
               href={specificData?.etherscanURL || ""}
@@ -77,7 +77,7 @@ const SendToRegulators = () => {
               {specificData?.etherscanURL ||
                 "https://sepolia.etherscan.io/tx/0x475fca847e2b37be5ee38c94761573f13ce723f7288a8e636a199a03f7fa5e7c"}
             </a>
-          </p>
+          </p> */}
         </div>
 
         {/* Verdict */}
