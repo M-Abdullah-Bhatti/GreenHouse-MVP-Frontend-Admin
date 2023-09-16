@@ -8,11 +8,11 @@ const AllReports = () => {
   const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [reportsSentToRegulators, setReportsSentToRegulators] = useState([]);
-  console.log("================");
-  console.log(reportsSentToRegulators);
+  // console.log("================");
+  // console.log(reportsSentToRegulators);
   // console.log(filteredData);
 
-  const { setStep, rows } = useStepsContext();
+  const { setStep, rows, sheet } = useStepsContext();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -38,25 +38,37 @@ const AllReports = () => {
 
   useEffect(() => {
     const loadData = () => {
-      let newFilteredData = [];
-      rows.forEach((item) => {
-        // Check if item.Company is already present in newFilteredData
-        const isPresent = newFilteredData.some(
-          (jack) => jack.Company === item.Company
-        );
+      console.log("sheet: ", sheet);
 
-        if (!isPresent) {
-          // If it's not present, push it into newFilteredData
-          newFilteredData.push(item);
+      let newFilteredData = [];
+
+      // Iterate over the keys in sheet
+      for (const key in sheet) {
+        if (Object.hasOwnProperty.call(sheet, key)) {
+          const arrayForCurrentKey = sheet[key];
+
+          // Iterate over the array for the current key
+          for (const item of arrayForCurrentKey) {
+            // Check if item.Company is already present in newFilteredData
+            const isPresent = newFilteredData.some(
+              (jack) => jack.Company === item.Company
+            );
+            if (!isPresent) {
+              // If it's not present, push it into newFilteredData
+              newFilteredData.push(item);
+            }
+          }
         }
-      });
+      }
+
+      console.log("Filtered data:", newFilteredData);
 
       // Update the state
       setFilteredData(newFilteredData);
       // console.log("filteredData: ", newFilteredData);
     };
     loadData();
-  }, []);
+  }, [sheet]);
 
   return (
     <div className="w-[90%] mx-auto my-10">
@@ -106,7 +118,6 @@ const AllReports = () => {
       <div className="w-full gap-7 grid grid-cols-3">
         {activeTab === 1 ? (
           // <Report data={allReportsData} />
-
           <Report data={filteredData} activeTab={1} />
         ) : (
           <Report data={reportsSentToRegulators} activeTab={2} />
