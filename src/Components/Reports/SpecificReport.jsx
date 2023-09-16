@@ -26,7 +26,8 @@ const ipfs = create({
 
 // ----------------------------
 const SpecificReport = () => {
-  const { setStep, currentCountry, description } = useStepsContext();
+  const { setStep, currentCountry, description, filteredCompanyData } =
+    useStepsContext();
   const [predict, setPredict] = useState();
   // Print Report
   const printRef = useRef();
@@ -94,25 +95,25 @@ const SpecificReport = () => {
 
   useEffect(() => {
     const loadData = () => {
-      // try {
-      //   console.log("yess");
+      try {
+        console.log("yess");
 
-      //   const response = axios
-      //     .post("https://vast-rose-bonobo-tux.cyclic.cloud/api/gpt/prompt", {
-      //       targetCompanyName: currentCountry,
-      //       description: description,
-      //     })
-      //     .then((res) => {
-      //       console.log("respoonse: ", res);
-      //       setPredict(res.data.response);
-      //     })
-      //     .catch((err) => console.log("err: ", err));
-      // } catch (error) {
-      //   console.log("error: ", error);
-      // }
-      let data =
-        " A/B Group PLC provide contradictory statements as it claim to be green, carbon-neutral or Net Zero by 2030. The three concepts are either ambiguous (i.e. green) or contradictory, as the scope of Net Zero differs from the one of carbon neutral.";
-      setPredict(data);
+        const response = axios
+          .post("http://localhost:5000/api/gpt/prompt", {
+            targetCompanyName: currentCountry,
+            description: filteredCompanyData,
+          })
+          .then((res) => {
+            console.log("response: ", res);
+            setPredict(res.data.response);
+          })
+          .catch((err) => console.log("err: ", err));
+      } catch (error) {
+        console.log("error: ", error);
+      }
+      // let data =
+      //   " A/B Group PLC provide contradictory statements as it claim to be green, carbon-neutral or Net Zero by 2030. The three concepts are either ambiguous (i.e. green) or contradictory, as the scope of Net Zero differs from the one of carbon neutral.";
+      // setPredict(data);
     };
     loadData();
   }, [currentCountry, description]);

@@ -12,6 +12,7 @@ export function StepsProvider({ children }) {
   const [currentCountry, setCurrentCountry] = useState();
   const [description, setDescription] = useState();
   const [sheet, setSheet] = useState();
+  const [filteredCompanyData, setFilteredCompanyData] = useState();
 
   return (
     <StepsContext.Provider
@@ -30,6 +31,8 @@ export function StepsProvider({ children }) {
         setDescription,
         sheet,
         setSheet,
+        filteredCompanyData,
+        setFilteredCompanyData,
       }}
     >
       {children}

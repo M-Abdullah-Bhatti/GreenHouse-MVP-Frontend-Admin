@@ -61,7 +61,7 @@ const AllReports = () => {
         }
       }
 
-      console.log("Filtered data:", newFilteredData);
+      // console.log("Filtered data:", newFilteredData);
 
       // Update the state
       setFilteredData(newFilteredData);
@@ -130,41 +130,58 @@ const AllReports = () => {
 export default AllReports;
 
 const Report = ({ data, activeTab }) => {
-  const { setStep, rows, setCurrentCountry, setDescription } =
-    useStepsContext();
+  const {
+    setStep,
+    rows,
+    setCurrentCountry,
+    setDescription,
+    sheet,
+    setFilteredCompanyData,
+    currentCountry,
+    filteredCompanyData,
+  } = useStepsContext();
 
-  const handleNavigate = async (report) => {
-    setCurrentCountry(report);
-    console.log("report: ", report);
+  const handleNavigate = async (companyName) => {
+    const sheetData = {};
 
-    // // Filter all the records that match the Company of the clicked report
-    // const filteredRecords = rows.filter(
-    //   (row) => row.Company === report.Company
-    // );
+    // Iterate over the keys in sheet
+    for (const key in sheet) {
+      let allText = [];
 
-    // console.log("Filtered records: ", filteredRecords);
+      if (Object.hasOwnProperty.call(sheet, key)) {
+        const arrayForCurrentKey = sheet[key];
 
-    // // Initialize an empty array to store all text
-    // let allText = [];
+        // Filter records for the specified company in the current sheet
+        let recordsForCompany = arrayForCurrentKey.filter(
+          (record) => record.Company === companyName
+        );
 
-    // // Assuming that your records have a 'text' field
-    // filteredRecords.forEach((record) => {
-    //   console.log("=", record.text);
-    //   if (record.text) {
-    //     allText.push(record.text);
-    //   }
-    // });
+        recordsForCompany = recordsForCompany.slice(0, 7);
 
-    // console.log("allText: ", allText);
-    // // Convert the array of text into a single string
-    // const paragraphText = allText.join(" ");
+        recordsForCompany.forEach((record) => {
+          if (record.Description) {
+            allText.push(record.Description);
+          }
+        });
 
-    // console.log("Paragraph text: ", paragraphText);
-    // // Now you can navigate or do something with these filtered records
+        // Convert the array of text into a single string
+        const paragraphText = allText.join(" ");
 
-    // setCurrentCountry(report.Company);
-    // setDescription(paragraphText);
+        // Store the filtered records for the current sheet
+        sheetData[key] = paragraphText;
+      }
+    }
+
+    // Instead of logging, you can now use sheetData wherever needed
+    console.log(sheetData);
+    console.log("===", typeof sheetData);
+
+    setFilteredCompanyData(sheetData);
+    setCurrentCountry(companyName);
     setStep("specific_report");
+
+    // Return sheetData to use it in other parts of your code
+    return sheetData;
   };
 
   return (

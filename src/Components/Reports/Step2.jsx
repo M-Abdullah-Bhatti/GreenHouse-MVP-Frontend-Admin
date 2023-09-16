@@ -60,45 +60,6 @@ const Step2 = () => {
     }
   };
 
-  // const processDataFromFiles = async () => {
-  //   try {
-  //     let allRows = []; // Initialize an empty array to store all rows from all sheets and files
-
-  //     for (const file of selectedFiles) {
-  //       const reader = new FileReader();
-  //       const promise = new Promise((resolve, reject) => {
-  //         reader.onload = async (e) => {
-  //           try {
-  //             const data = new Uint8Array(e.target.result);
-  //             const workbook = XLSX.read(data, { type: "array" });
-
-  //             for (const sheetName of workbook.SheetNames) {
-  //               const sheet = workbook.Sheets[sheetName];
-  //               const rows = XLSX.utils.sheet_to_json(sheet);
-
-  //               // Process the rows from the sheet (console.log or store the data as needed)
-  //               console.log(`File: ${file.name}, Sheet: ${sheetName}`);
-  //               console.log("===", rows);
-
-  //               allRows = [...allRows, ...rows]; // Accumulate rows
-  //             }
-  //             resolve();
-  //           } catch (error) {
-  //             reject(error);
-  //           }
-  //         };
-  //       });
-
-  //       reader.readAsArrayBuffer(file);
-  //       await promise; // Wait for each file to be processed before moving to the next
-  //     }
-
-  //     setRows(allRows); // Set all rows at once after all files have been processed
-  //   } catch (err) {
-  //     console.log("err: ", err);
-  //   }
-  // };
-
   const handleFileChange = (event) => {
     console.log("Hello");
     const newSelectedFiles = Array.from(event.target.files);
@@ -154,9 +115,9 @@ const Step2 = () => {
     }, 2000);
   };
 
-  const showRows = () => {
-    console.log("rows: ", sheetData);
-  };
+  // const showRows = () => {
+  //   console.log("rows: ", sheetData);
+  // };
 
   return (
     <>
@@ -236,12 +197,12 @@ const Step2 = () => {
                 Confirm
               </button>
 
-              <button
+              {/* <button
                 onClick={showRows}
                 className="bg-[#3FDD78] text-lg rounded-2xl mt-10 py-3 px-6 border-none outline-none text-[#fff] "
               >
                 Show
-              </button>
+              </button> */}
             </div>
           </div>
         </div>
