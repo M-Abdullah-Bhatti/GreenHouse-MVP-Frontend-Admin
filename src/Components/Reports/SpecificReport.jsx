@@ -34,7 +34,10 @@ const SpecificReport = () => {
   const [showStep1Modify, setShowStep1Modify] = useState(false);
   const { setStep, currentCompany, description, filteredCompanyData } =
     useStepsContext();
-  const [predict, setPredict] = useState();
+
+  // state variables:
+  const [predict, setPredict] = useState("There will be be some prediction");
+
   // Print Report
   const printRef = useRef();
   const [hash, setHash] = useState("");
@@ -97,84 +100,128 @@ const SpecificReport = () => {
   //     });
   // };
 
+  const handleSendToRegulators = async () => {
+    // console.log(
+    //   "report data send: ",
+    //   reportDataUpdate.age,
+    //   reportDataUpdate.priority
+    // );
+    console.log({
+      companyName: "hello111",
+      // companyName: currentCompany,
+      contradiction: predict,
+      age: reportDataUpdate.age,
+      priority: reportDataUpdate.priority,
+    });
+    axios
+      .post("http://localhost:5000/api/report/updateSendToRegulators", {
+        companyName: "hello1111111",
+        // companyName: currentCompany,
+        contradiction: predict,
+        age: reportDataUpdate.age,
+        priority: reportDataUpdate.priority,
+      })
+      .then((res) => {
+        console.log("res: ", res);
+      })
+      .catch((err) => {
+        console.log("err: ", err);
+      });
+  };
+
   // update report age priority
 
   const [reportDataUpdate, setReportDataUpdate] = useState({
-    priority: "",
-    age: "",
+    priority: "Low",
+    age: "Recent",
   });
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
-    setReportDataUpdate({
-      ...reportDataUpdate,
+
+    setReportDataUpdate((prevData) => ({
+      ...prevData,
       [name]: value,
-    });
+    }));
+
+    console.log("final: ", reportDataUpdate);
   };
 
-  const { mutate: addMutateUpdate, isLoading: isLoadingUpdate } =
-    useUpdateReportAgePriority(
-      JSON.stringify({
-        ...reportDataUpdate,
-        companyName: "hello1",
-      })
-    );
+  // const { mutate: addMutateUpdate, isLoading: isLoadingUpdate } =
+  //   useUpdateReportAgePriority(
+  //     JSON.stringify({
+  //       ...reportDataUpdate,
+  //       companyName: "hello1",
+  //     })
+  //   );
 
-  const handleUpdateAgePriority = async () => {
-    if (!reportDataUpdate.age || !reportDataUpdate.priority) {
-      console.log("reportDataUpdate:", reportDataUpdate);
-      toast.error("Please select the fields");
-      return;
-    }
+  // const handleUpdateAgePriority = async () => {
+  //   if (!reportDataUpdate.age || !reportDataUpdate.priority) {
+  //     console.log("reportDataUpdate:", reportDataUpdate);
+  //     toast.error("Please select the fields");
+  //     return;
+  //   }
 
-    addMutateUpdate(
-      {},
-      {
-        onSuccess: (response) => {
-          if (response?.data?.message) {
-            toast.error(response?.data?.message);
-          }
-          if (response?.data?.results) {
-            toast.success("Stats has been updated");
-            setShowStep1Modify(false);
-            setShowStep0(true);
-          }
-        },
-      }
-    );
-  };
+  //   addMutateUpdate(
+  //     {},
+  //     {
+  //       onSuccess: (response) => {
+  //         if (response?.data?.message) {
+  //           toast.error(response?.data?.message);
+  //         }
+  //         if (response?.data?.results) {
+  //           toast.success("Stats has been updated");
+  //           setShowStep1Modify(false);
+  //           setShowStep0(true);
+  //         }
+  //       },
+  //     }
+  //   );
+  // };
 
   // ===================================
 
   // getSingleReport Data
-  const { data: singleReportData, isLoading: singleReportLoading } =
-    useGetSingleReportDetails("hello1");
+  // const { data: singleReportData, isLoading: singleReportLoading } =
+  //   useGetSingleReportDetails("hello1");
 
   // // GPT Response
-  // useEffect(() => {
-  //   const loadData = () => {
-  //     try {
-  //       console.log("yess");
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        console.log("yess");
 
-  //       const response = axios
-  //         .post("http://localhost:5000/api/gpt/prompt", {
-  //           targetCompanyName: currentCompany,
-  //           description: filteredCompanyData,
-  //         })
-  //         .then((res) => {
-  //           console.log("response: ", res);
-  //           setPredict(res.data.response);
-  //         })
-  //         .catch((err) => console.log("err: ", err));
-  //     } catch (error) {
-  //       console.log("error: ", error);
-  //     }
-  //     // let data =
-  //     //   " A/B Group PLC provide contradictory statements as it claim to be green, carbon-neutral or Net Zero by 2030. The three concepts are either ambiguous (i.e. green) or contradictory, as the scope of Net Zero differs from the one of carbon neutral.";
-  //     // setPredict(data);
-  //   };
-  //   loadData();
-  // }, [currentCompany, description]);
+        const gptPrompt = await axios.get("http://localhost:5000/api/prompt");
+        console.log("gpt prompt: ", gptPrompt?.data?.result?.prompt);
+        console.log("filteredCompanyData: ", filteredCompanyData);
+
+        let prompt = gptPrompt?.data?.result?.prompt;
+
+        if (prompt) {
+          console.log("exist");
+        } else {
+          console.log("no exist");
+        }
+
+        // const response = axios
+        //   .post("http://localhost:5000/api/gpt/prompt", {
+        //     targetCompanyName: currentCompany,
+        //     description: filteredCompanyData,
+        //   })
+        //   .then((res) => {
+        //     console.log("response: ", res);
+        //     setPredict(res.data.response);
+        //   })
+        //   .catch((err) => console.log("err: ", err));
+      } catch (error) {
+        console.log("error: ", error);
+      }
+      // let data =
+      //   " A/B Group PLC provide contradictory statements as it claim to be green, carbon-neutral or Net Zero by 2030. The three concepts are either ambiguous (i.e. green) or contradictory, as the scope of Net Zero differs from the one of carbon neutral.";
+      // setPredict(data);
+    };
+    loadData();
+  }, [currentCompany, description]);
 
   return (
     <div>
@@ -223,7 +270,7 @@ const SpecificReport = () => {
             <div className="flex justify-start items-center mb-2">
               <p className="text-[#6C7275] mr-3 font-semibold">Age:</p>
               <label htmlFor="freshness" className="ml-2">
-                Recent
+                {reportDataUpdate.age}
               </label>
             </div>
 
@@ -231,14 +278,14 @@ const SpecificReport = () => {
               <p className="text-[#6C7275] mr-3 font-semibold">Priority:</p>
 
               <label htmlFor="potentialgreenwashing" className="ml-2">
-                Low
+                {reportDataUpdate.priority}
               </label>
             </div>
 
             {/* Buttons */}
             <div className="flex gap-3 mb-8">
               <button
-                // onClick={handleSendToRegulators}
+                onClick={handleSendToRegulators}
                 className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
               >
                 Send to regulator
@@ -345,7 +392,7 @@ const SpecificReport = () => {
                     type="radio"
                     id="High"
                     name="priority"
-                    value="Low"
+                    value="High"
                     onChange={handleOnChange}
                     className="cursor-pointer custom-radio"
                   />
@@ -359,10 +406,15 @@ const SpecificReport = () => {
             {/* Buttons */}
             <div className="flex gap-3 mb-8">
               <button
-                onClick={handleUpdateAgePriority}
+                // onClick={handleUpdateAgePriority}
+                onClick={() => {
+                  setShowStep1Modify(false);
+                  setShowStep0(true);
+                }}
                 className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
               >
-                {isLoadingUpdate ? "Updating..." : "Update"}
+                {/* {isLoadingUpdate ? "Updating..." : "Update"} */}
+                Update
               </button>
 
               <button
