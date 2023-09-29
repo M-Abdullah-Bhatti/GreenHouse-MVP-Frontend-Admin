@@ -5,11 +5,11 @@ const StepsContext = createContext();
 
 // Create a provider component
 export function StepsProvider({ children }) {
-  const [step, setStep] = useState("step1");
+  const [step, setStep] = useState("specific_report");
   const [processing, setProcessing] = useState(false);
   const [showAllReports, setShowAllReports] = useState(false);
   const [rows, setRows] = useState();
-  const [currentCountry, setCurrentCountry] = useState();
+  const [currentCompany, setCurrentCompany] = useState();
   const [description, setDescription] = useState();
   const [sheet, setSheet] = useState();
   const [filteredCompanyData, setFilteredCompanyData] = useState();
@@ -25,8 +25,8 @@ export function StepsProvider({ children }) {
         setShowAllReports,
         rows,
         setRows,
-        currentCountry,
-        setCurrentCountry,
+        currentCompany,
+        setCurrentCompany,
         description,
         setDescription,
         sheet,

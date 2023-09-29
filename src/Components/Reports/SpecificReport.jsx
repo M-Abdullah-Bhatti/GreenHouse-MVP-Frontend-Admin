@@ -7,6 +7,10 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { smartContract } from "../../Constants";
 import { ethers } from "ethers";
+import {
+  useGetSingleReportDetails,
+  useUpdateReportAgePriority,
+} from "../../Hooks/reports-hooks";
 
 // IPFS
 const projectId = "2V6620s2FhImATdUuY4dwIAqoI0";
@@ -26,7 +30,9 @@ const ipfs = create({
 
 // ----------------------------
 const SpecificReport = () => {
-  const { setStep, currentCountry, description, filteredCompanyData } =
+  const [showStep0, setShowStep0] = useState(true);
+  const [showStep1Modify, setShowStep1Modify] = useState(false);
+  const { setStep, currentCompany, description, filteredCompanyData } =
     useStepsContext();
   const [predict, setPredict] = useState();
   // Print Report
@@ -79,7 +85,7 @@ const SpecificReport = () => {
       .post(
         "https://vast-rose-bonobo-tux.cyclic.cloud/api/report/updateSendToRegulators",
         {
-          companyName: currentCountry,
+          companyName: currentCompany,
         }
       )
       .then(() => {
@@ -91,6 +97,58 @@ const SpecificReport = () => {
       });
   };
 
+  // update report age priority
+  const [reportDataUpdate, setReportDataUpdate] = useState({
+    priority: "",
+    age: "",
+  });
+
+  const handleOnChange = (e) => {
+    const { name, value } = e.target;
+    setReportDataUpdate({
+      ...reportDataUpdate,
+      [name]: value,
+    });
+  };
+
+  const { mutate: addMutateUpdate, isLoading: isLoadingUpdate } =
+    useUpdateReportAgePriority(
+      JSON.stringify({
+        ...reportDataUpdate,
+        companyName: "hello1",
+      })
+    );
+
+  const handleUpdateAgePriority = async () => {
+    if (!reportDataUpdate.age || !reportDataUpdate.priority) {
+      console.log("reportDataUpdate:", reportDataUpdate);
+      toast.error("Please select the fields");
+      return;
+    }
+
+    addMutateUpdate(
+      {},
+      {
+        onSuccess: (response) => {
+          if (response?.data?.message) {
+            toast.error(response?.data?.message);
+          }
+          if (response?.data?.results) {
+            toast.success("Stats has been updated");
+            setShowStep1Modify(false);
+            setShowStep0(true);
+          }
+        },
+      }
+    );
+  };
+
+  // ===================================
+
+  // getSingleReport Data
+  const { data: singleReportData, isLoading: singleReportLoading } =
+    useGetSingleReportDetails("hello1");
+
   // GPT Response
 
   useEffect(() => {
@@ -100,7 +158,7 @@ const SpecificReport = () => {
 
         const response = axios
           .post("http://localhost:5000/api/gpt/prompt", {
-            targetCompanyName: currentCountry,
+            targetCompanyName: currentCompany,
             description: filteredCompanyData,
           })
           .then((res) => {
@@ -116,7 +174,7 @@ const SpecificReport = () => {
       // setPredict(data);
     };
     loadData();
-  }, [currentCountry, description]);
+  }, [currentCompany, description]);
 
   return (
     <div>
@@ -138,7 +196,7 @@ const SpecificReport = () => {
             Aug, 24, 2023
           </p>
           <h1 className="mb-5 text-[#000] text-2xl font-bold">
-            {currentCountry}
+            {currentCompany}
           </h1>
           <p className="text-[#6C7275] text-base mb-1 font-semibold">
             Jurisdiction :
@@ -160,53 +218,193 @@ const SpecificReport = () => {
         </div>
 
         {/* Stats */}
-        <div className="mb-7">
-          <div className="flex justify-start items-center mb-2">
-            <p className="text-[#6C7275] mr-3 font-semibold">
-              Potential reenwashing:
-            </p>
+        {showStep0 && (
+          <div className="mb-7">
+            <div className="flex justify-start items-center mb-2">
+              <p className="text-[#6C7275] mr-3 font-semibold">Age:</p>
 
-            <input
-              type="radio"
-              id="potentialgreenwashing"
-              name="potentialgreenwashing"
-              value="Low"
-              className="cursor-pointer custom-radio"
-            />
-            <label htmlFor="potentialgreenwashing" className="ml-2">
-              Low
-            </label>
+              <input
+                type="radio"
+                id="freshness"
+                name="freshness"
+                value={
+                  singleReportData?.results[0].age &&
+                  singleReportData?.results[0].age
+                }
+                className="cursor-pointer custom-radio"
+              />
+              <label htmlFor="freshness" className="ml-2">
+                {singleReportLoading
+                  ? "Loading ..."
+                  : singleReportData?.results[0].age &&
+                    singleReportData?.results[0].age}
+              </label>
+            </div>
+
+            <div className="flex justify-start items-center mb-7">
+              <p className="text-[#6C7275] mr-3 font-semibold">Priority:</p>
+
+              <input
+                type="radio"
+                id="potentialgreenwashing"
+                name="potentialgreenwashing"
+                value={
+                  singleReportData?.results[0].priority &&
+                  singleReportData?.results[0].priority
+                }
+                className="cursor-pointer custom-radio"
+              />
+              <label htmlFor="potentialgreenwashing" className="ml-2">
+                {singleReportLoading
+                  ? "Loading ..."
+                  : singleReportData?.results[0].priority &&
+                    singleReportData?.results[0].priority}
+              </label>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3 mb-8">
+              <button
+                onClick={handleSendToRegulators}
+                className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
+              >
+                Send to regulator
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowStep1Modify(true);
+                  setShowStep0(false);
+                }}
+                className="bg-[#000000] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
+              >
+                Modify
+              </button>
+            </div>
+            <hr className="bg-[#E8ECEF]" />
           </div>
+        )}
 
-          <div className="flex justify-start items-center mb-7">
-            <p className="text-[#6C7275] mr-3 font-semibold">Freshness:</p>
+        {showStep1Modify && (
+          <div className="mb-7">
+            <div className="flex justify-start items-center mb-2">
+              <p className="text-[#6C7275] mr-3 font-semibold">Age:</p>
 
-            <input
-              type="radio"
-              id="freshness"
-              name="freshness"
-              value="Low"
-              className="cursor-pointer custom-radio"
-            />
-            <label htmlFor="freshness" className="ml-2">
-              Fresh
-            </label>
+              <div className="flex justify-start items-center gap-5">
+                <div>
+                  <input
+                    type="radio"
+                    id="Recent"
+                    name="age"
+                    value="Recent"
+                    onChange={handleOnChange}
+                    className="cursor-pointer custom-radio"
+                  />
+                  <label htmlFor="Recent" className="ml-2">
+                    Recent
+                  </label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="Average"
+                    name="age"
+                    value="Average"
+                    onChange={handleOnChange}
+                    className="cursor-pointer custom-radio"
+                  />
+                  <label htmlFor="Average" className="ml-2">
+                    Average
+                  </label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="Old"
+                    name="age"
+                    value="Old"
+                    onChange={handleOnChange}
+                    className="cursor-pointer custom-radio"
+                  />
+                  <label htmlFor="Old" className="ml-2">
+                    Old
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex justify-start items-center mb-7">
+              <p className="text-[#6C7275] mr-3 font-semibold">Priority:</p>
+
+              <div className="flex justify-start items-start gap-5">
+                <div>
+                  <input
+                    type="radio"
+                    id="Low"
+                    name="priority"
+                    value="Low"
+                    onChange={handleOnChange}
+                    className="cursor-pointer custom-radio"
+                  />
+                  <label htmlFor="Low" className="ml-2">
+                    Low
+                  </label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="Medium"
+                    name="priority"
+                    value="Medium"
+                    onChange={handleOnChange}
+                    className="cursor-pointer custom-radio"
+                  />
+                  <label htmlFor="Medium" className="ml-2">
+                    Medium
+                  </label>
+                </div>
+
+                <div>
+                  <input
+                    type="radio"
+                    id="High"
+                    name="priority"
+                    value="Low"
+                    onChange={handleOnChange}
+                    className="cursor-pointer custom-radio"
+                  />
+                  <label htmlFor="High" className="ml-2">
+                    High
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            {/* Buttons */}
+            <div className="flex gap-3 mb-8">
+              <button
+                onClick={handleUpdateAgePriority}
+                className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
+              >
+                {isLoadingUpdate ? "Updating..." : "Update"}
+              </button>
+
+              <button
+                onClick={() => {
+                  setShowStep1Modify(false);
+                  setShowStep0(true);
+                }}
+                className="bg-[#000000] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
+              >
+                Cancel
+              </button>
+            </div>
+            <hr className="bg-[#E8ECEF]" />
           </div>
-          {/* Buttons */}
-          <div className="flex gap-3 mb-8">
-            <button
-              onClick={handleSendToRegulators}
-              className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
-            >
-              Send to regulator
-            </button>
-
-            <button className="bg-[#000000] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] ">
-              Modify
-            </button>
-          </div>
-          <hr className="bg-[#E8ECEF]" />
-        </div>
+        )}
 
         {/* Links */}
         <div className="my-5">
