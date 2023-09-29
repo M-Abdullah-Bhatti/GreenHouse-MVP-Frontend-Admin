@@ -79,25 +79,26 @@ const SpecificReport = () => {
     }
   };
 
-  // Function to update report status
-  const handleSendToRegulators = () => {
-    axios
-      .post(
-        "https://vast-rose-bonobo-tux.cyclic.cloud/api/report/updateSendToRegulators",
-        {
-          companyName: currentCompany,
-        }
-      )
-      .then(() => {
-        toast.success("Report sent to regulator");
-        setStep("all_reports");
-      })
-      .catch(() => {
-        toast.error("Something went wrong");
-      });
-  };
+  // // Function to update report status
+  // const handleSendToRegulators = () => {
+  //   axios
+  //     .post(
+  //       "https://vast-rose-bonobo-tux.cyclic.cloud/api/report/updateSendToRegulators",
+  //       {
+  //         companyName: currentCompany,
+  //       }
+  //     )
+  //     .then(() => {
+  //       toast.success("Report sent to regulator");
+  //       setStep("all_reports");
+  //     })
+  //     .catch(() => {
+  //       toast.error("Something went wrong");
+  //     });
+  // };
 
   // update report age priority
+
   const [reportDataUpdate, setReportDataUpdate] = useState({
     priority: "",
     age: "",
@@ -149,32 +150,31 @@ const SpecificReport = () => {
   const { data: singleReportData, isLoading: singleReportLoading } =
     useGetSingleReportDetails("hello1");
 
-  // GPT Response
+  // // GPT Response
+  // useEffect(() => {
+  //   const loadData = () => {
+  //     try {
+  //       console.log("yess");
 
-  useEffect(() => {
-    const loadData = () => {
-      try {
-        console.log("yess");
-
-        const response = axios
-          .post("http://localhost:5000/api/gpt/prompt", {
-            targetCompanyName: currentCompany,
-            description: filteredCompanyData,
-          })
-          .then((res) => {
-            console.log("response: ", res);
-            setPredict(res.data.response);
-          })
-          .catch((err) => console.log("err: ", err));
-      } catch (error) {
-        console.log("error: ", error);
-      }
-      // let data =
-      //   " A/B Group PLC provide contradictory statements as it claim to be green, carbon-neutral or Net Zero by 2030. The three concepts are either ambiguous (i.e. green) or contradictory, as the scope of Net Zero differs from the one of carbon neutral.";
-      // setPredict(data);
-    };
-    loadData();
-  }, [currentCompany, description]);
+  //       const response = axios
+  //         .post("http://localhost:5000/api/gpt/prompt", {
+  //           targetCompanyName: currentCompany,
+  //           description: filteredCompanyData,
+  //         })
+  //         .then((res) => {
+  //           console.log("response: ", res);
+  //           setPredict(res.data.response);
+  //         })
+  //         .catch((err) => console.log("err: ", err));
+  //     } catch (error) {
+  //       console.log("error: ", error);
+  //     }
+  //     // let data =
+  //     //   " A/B Group PLC provide contradictory statements as it claim to be green, carbon-neutral or Net Zero by 2030. The three concepts are either ambiguous (i.e. green) or contradictory, as the scope of Net Zero differs from the one of carbon neutral.";
+  //     // setPredict(data);
+  //   };
+  //   loadData();
+  // }, [currentCompany, description]);
 
   return (
     <div>
@@ -222,50 +222,23 @@ const SpecificReport = () => {
           <div className="mb-7">
             <div className="flex justify-start items-center mb-2">
               <p className="text-[#6C7275] mr-3 font-semibold">Age:</p>
-
-              <input
-                type="radio"
-                id="freshness"
-                name="freshness"
-                value={
-                  singleReportData?.results[0].age &&
-                  singleReportData?.results[0].age
-                }
-                className="cursor-pointer custom-radio"
-              />
               <label htmlFor="freshness" className="ml-2">
-                {singleReportLoading
-                  ? "Loading ..."
-                  : singleReportData?.results[0].age &&
-                    singleReportData?.results[0].age}
+                Recent
               </label>
             </div>
 
             <div className="flex justify-start items-center mb-7">
               <p className="text-[#6C7275] mr-3 font-semibold">Priority:</p>
 
-              <input
-                type="radio"
-                id="potentialgreenwashing"
-                name="potentialgreenwashing"
-                value={
-                  singleReportData?.results[0].priority &&
-                  singleReportData?.results[0].priority
-                }
-                className="cursor-pointer custom-radio"
-              />
               <label htmlFor="potentialgreenwashing" className="ml-2">
-                {singleReportLoading
-                  ? "Loading ..."
-                  : singleReportData?.results[0].priority &&
-                    singleReportData?.results[0].priority}
+                Low
               </label>
             </div>
 
             {/* Buttons */}
             <div className="flex gap-3 mb-8">
               <button
-                onClick={handleSendToRegulators}
+                // onClick={handleSendToRegulators}
                 className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
               >
                 Send to regulator
