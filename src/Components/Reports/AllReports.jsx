@@ -133,12 +133,12 @@ const Report = ({ data, activeTab }) => {
   const {
     setStep,
     rows,
-    setCurrentCountry,
     setDescription,
     sheet,
     setFilteredCompanyData,
     currentCountry,
     filteredCompanyData,
+    setCurrentCompany,
   } = useStepsContext();
 
   const handleNavigate = async (companyName) => {
@@ -177,7 +177,7 @@ const Report = ({ data, activeTab }) => {
     console.log("===", typeof sheetData);
 
     setFilteredCompanyData(sheetData);
-    setCurrentCountry(companyName);
+    setCurrentCompany(companyName);
     setStep("specific_report");
 
     // Return sheetData to use it in other parts of your code

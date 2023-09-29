@@ -115,8 +115,8 @@ const SpecificReport = () => {
     });
     axios
       .post("http://localhost:5000/api/report/updateSendToRegulators", {
-        companyName: "hello1111111",
-        // companyName: currentCompany,
+        // companyName: "hello1111111",
+        companyName: currentCompany,
         contradiction: predict,
         age: reportDataUpdate.age,
         priority: reportDataUpdate.priority,
@@ -186,42 +186,46 @@ const SpecificReport = () => {
   //   useGetSingleReportDetails("hello1");
 
   // // GPT Response
+  // useEffect(() => {
+  //   const loadData = async () => {
+  //     try {
+  //       console.log("yess");
+
+  //       const gptPrompt = await axios.get("http://localhost:5000/api/prompt");
+  //       console.log("gpt prompt: ", gptPrompt?.data?.result?.prompt);
+  //       console.log("filteredCompanyData: ", filteredCompanyData);
+
+  //       let prompt = (gptPrompt?.data?.result?.prompt).toString();
+  //       let concatenatedData = `${prompt}\n \n${JSON.stringify(
+  //         filteredCompanyData
+  //       )}`;
+
+  //       if (prompt) {
+  //         console.log("exist", concatenatedData);
+  //         const response = axios
+  //           .post("http://localhost:5000/api/gpt/prompt", {
+  //             targetCompanyName: currentCompany,
+  //             description: concatenatedData,
+  //           })
+  //           .then((res) => {
+  //             console.log("response: ", res);
+  //             setPredict(res.data.response);
+  //           })
+  //           .catch((err) => console.log("err: ", err));
+  //       } else {
+  //         console.log("no exist");
+  //       }
+  //     } catch (error) {
+  //       console.log("error: ", error);
+  //     }
+  //   };
+  //   loadData();
+  // }, [currentCompany, description]);
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        console.log("yess");
-
-        const gptPrompt = await axios.get("http://localhost:5000/api/prompt");
-        console.log("gpt prompt: ", gptPrompt?.data?.result?.prompt);
-        console.log("filteredCompanyData: ", filteredCompanyData);
-
-        let prompt = gptPrompt?.data?.result?.prompt;
-
-        if (prompt) {
-          console.log("exist");
-        } else {
-          console.log("no exist");
-        }
-
-        // const response = axios
-        //   .post("http://localhost:5000/api/gpt/prompt", {
-        //     targetCompanyName: currentCompany,
-        //     description: filteredCompanyData,
-        //   })
-        //   .then((res) => {
-        //     console.log("response: ", res);
-        //     setPredict(res.data.response);
-        //   })
-        //   .catch((err) => console.log("err: ", err));
-      } catch (error) {
-        console.log("error: ", error);
-      }
-      // let data =
-      //   " A/B Group PLC provide contradictory statements as it claim to be green, carbon-neutral or Net Zero by 2030. The three concepts are either ambiguous (i.e. green) or contradictory, as the scope of Net Zero differs from the one of carbon neutral.";
-      // setPredict(data);
-    };
-    loadData();
-  }, [currentCompany, description]);
+    console.log("filteredCompanyData: ", typeof filteredCompanyData);
+    console.log("filteredCompanyData: ", filteredCompanyData);
+  }, []);
 
   return (
     <div>
@@ -458,7 +462,7 @@ const SpecificReport = () => {
         </div>
 
         {/* Claims */}
-        <div>
+        {/* <div>
           <p className="text-[#6C7275] font-semibold mb-3">
             Sustainability claims:
           </p>
@@ -472,6 +476,39 @@ const SpecificReport = () => {
             Data source:
             <span className="text-[#000] font-semibold ml-2">Twitter</span>
           </p>
+        </div> */}
+        <div>
+          <p className="text-[#6C7275] font-semibold mb-3">
+            Sustainability claims:
+          </p>
+          {Object.entries(filteredCompanyData).map(([key, value]) => {
+            if (value) {
+              return (
+                <>
+                  <p className="font-semibold text-[#000]">
+                    {value.slice(0, 250)}
+                    {value.length > 250 && "..."}
+                  </p>
+                  <p className="text-[#6C7275] text-sm mt-3 font-semibold mb-4">
+                    Data source:
+                    <span className="text-[#000] font-semibold ml-2 ">
+                      {key}
+                    </span>
+                  </p>
+                </>
+              );
+            }
+          })}
+          {/* <p className="font-semibold text-[#000]">
+            In 2019 we made €5 b available for green projects and last year we
+            set a target for 70% of our lending to be green by 2030. We also
+            became the first Irish bank to pledge to operate as carbon neutral
+            by 2030
+          </p>
+          <p className="text-[#6C7275] text-sm mt-3 font-semibold">
+            Data source:
+            <span className="text-[#000] font-semibold ml-2">Twitter</span>
+          </p> */}
         </div>
       </div>
 
