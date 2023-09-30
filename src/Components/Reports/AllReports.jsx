@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { allReportsData, allReportsSentToRegulatorsData } from "../../data";
 import { useStepsContext } from "../../Context/StateContext";
 import axios from "axios";
+import { formattedDate } from "../../utils/date";
 
 const AllReports = () => {
   const [activeTab, setActiveTab] = useState(1);
@@ -197,7 +198,7 @@ const Report = ({ data, activeTab }) => {
             }}
             className="min-w-[31%] p-4 cursor-pointer rounded-xl hover:border-[1px] hover:border-black  "
           >
-            <p className="mb-2 text-sm text-[#6C7275]">{report.year}</p>
+            <p className="mb-2 text-sm text-[#6C7275]">{formattedDate}</p>
             <h1 className="mb-3 text-[#000] text-xl font-semibold">
               {report.Company}
             </h1>

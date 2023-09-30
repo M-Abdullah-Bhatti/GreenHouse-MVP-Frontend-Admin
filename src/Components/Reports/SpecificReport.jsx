@@ -7,10 +7,9 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { smartContract } from "../../Constants";
 import { ethers } from "ethers";
-import {
-  useGetSingleReportDetails,
-  useUpdateReportAgePriority,
-} from "../../Hooks/reports-hooks";
+
+import apiUrl from "../../utils/baseURL";
+import { formattedDate } from "../../utils/date";
 
 // IPFS
 const projectId = "2V6620s2FhImATdUuY4dwIAqoI0";
@@ -36,7 +35,9 @@ const SpecificReport = () => {
     useStepsContext();
 
   // state variables:
-  const [predict, setPredict] = useState("There will be be some prediction");
+  const [predict, setPredict] = useState(
+    "Please wait a few seconds while the model predicts contradiction."
+  );
 
   // Print Report
   const printRef = useRef();
@@ -82,47 +83,19 @@ const SpecificReport = () => {
     }
   };
 
-  // // Function to update report status
-  // const handleSendToRegulators = () => {
-  //   axios
-  //     .post(
-  //       "https://vast-rose-bonobo-tux.cyclic.cloud/api/report/updateSendToRegulators",
-  //       {
-  //         companyName: currentCompany,
-  //       }
-  //     )
-  //     .then(() => {
-  //       toast.success("Report sent to regulator");
-  //       setStep("all_reports");
-  //     })
-  //     .catch(() => {
-  //       toast.error("Something went wrong");
-  //     });
-  // };
-
   const handleSendToRegulators = async () => {
-    // console.log(
-    //   "report data send: ",
-    //   reportDataUpdate.age,
-    //   reportDataUpdate.priority
-    // );
-    console.log({
-      companyName: "hello111",
-      // companyName: currentCompany,
-      contradiction: predict,
-      age: reportDataUpdate.age,
-      priority: reportDataUpdate.priority,
-    });
     axios
-      .post("http://localhost:5000/api/report/updateSendToRegulators", {
+      .post(`${apiUrl}/api/report/updateSendToRegulators`, {
         // companyName: "hello1111111",
         companyName: currentCompany,
         contradiction: predict,
         age: reportDataUpdate.age,
         priority: reportDataUpdate.priority,
+        timeStamp: formattedDate,
       })
       .then((res) => {
         console.log("res: ", res);
+        toast.success("Report has been sent to regulators");
       })
       .catch((err) => {
         console.log("err: ", err);
@@ -147,43 +120,7 @@ const SpecificReport = () => {
     console.log("final: ", reportDataUpdate);
   };
 
-  // const { mutate: addMutateUpdate, isLoading: isLoadingUpdate } =
-  //   useUpdateReportAgePriority(
-  //     JSON.stringify({
-  //       ...reportDataUpdate,
-  //       companyName: "hello1",
-  //     })
-  //   );
-
-  // const handleUpdateAgePriority = async () => {
-  //   if (!reportDataUpdate.age || !reportDataUpdate.priority) {
-  //     console.log("reportDataUpdate:", reportDataUpdate);
-  //     toast.error("Please select the fields");
-  //     return;
-  //   }
-
-  //   addMutateUpdate(
-  //     {},
-  //     {
-  //       onSuccess: (response) => {
-  //         if (response?.data?.message) {
-  //           toast.error(response?.data?.message);
-  //         }
-  //         if (response?.data?.results) {
-  //           toast.success("Stats has been updated");
-  //           setShowStep1Modify(false);
-  //           setShowStep0(true);
-  //         }
-  //       },
-  //     }
-  //   );
-  // };
-
   // ===================================
-
-  // getSingleReport Data
-  // const { data: singleReportData, isLoading: singleReportLoading } =
-  //   useGetSingleReportDetails("hello1");
 
   // // GPT Response
   // useEffect(() => {
@@ -191,7 +128,7 @@ const SpecificReport = () => {
   //     try {
   //       console.log("yess");
 
-  //       const gptPrompt = await axios.get("http://localhost:5000/api/prompt");
+  //       const gptPrompt = await axios.get(`${apiUrl}/api/prompt`);
   //       console.log("gpt prompt: ", gptPrompt?.data?.result?.prompt);
   //       console.log("filteredCompanyData: ", filteredCompanyData);
 
@@ -203,7 +140,7 @@ const SpecificReport = () => {
   //       if (prompt) {
   //         console.log("exist", concatenatedData);
   //         const response = axios
-  //           .post("http://localhost:5000/api/gpt/prompt", {
+  //           .post(`${apiUrl}/api/gpt/prompt`, {
   //             targetCompanyName: currentCompany,
   //             description: concatenatedData,
   //           })
@@ -222,11 +159,6 @@ const SpecificReport = () => {
   //   loadData();
   // }, [currentCompany, description]);
 
-  useEffect(() => {
-    console.log("filteredCompanyData: ", typeof filteredCompanyData);
-    console.log("filteredCompanyData: ", filteredCompanyData);
-  }, []);
-
   return (
     <div>
       <BackButton setStep={() => setStep("all_reports")} />
@@ -244,7 +176,7 @@ const SpecificReport = () => {
 
         <div className="mb-7">
           <p className="mb-2 text-sm text-[#2c2d2e] font-semibold">
-            Aug, 24, 2023
+            {formattedDate}
           </p>
           <h1 className="mb-5 text-[#000] text-2xl font-bold">
             {currentCompany}
