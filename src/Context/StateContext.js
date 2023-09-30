@@ -5,7 +5,7 @@ const StepsContext = createContext();
 
 // Create a provider component
 export function StepsProvider({ children }) {
-  const [step, setStep] = useState("step1");
+  const [step, setStep] = useState("rough_specific_report");
   const [processing, setProcessing] = useState(false);
   const [showAllReports, setShowAllReports] = useState(false);
   const [rows, setRows] = useState();
