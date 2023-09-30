@@ -82,13 +82,15 @@ const SpecificReport = () => {
       toast.error(error.message);
     }
   };
-
+  // http://localhost:5000
   const handleSendToRegulators = async () => {
     axios
-      .post(`${apiUrl}/api/report/updateSendToRegulators`, {
+      // .post(`${apiUrl}/api/report/updateSendToRegulators`, {
+      .post(`http://localhost:5000/api/report/updateSendToRegulators`, {
         // companyName: "hello1111111",
         companyName: currentCompany,
         contradiction: predict,
+        claims: JSON.stringify(filteredCompanyData),
         age: reportDataUpdate.age,
         priority: reportDataUpdate.priority,
         timeStamp: formattedDate,
@@ -123,41 +125,41 @@ const SpecificReport = () => {
   // ===================================
 
   // // GPT Response
-  // useEffect(() => {
-  //   const loadData = async () => {
-  //     try {
-  //       console.log("yess");
+  useEffect(() => {
+    const loadData = async () => {
+      try {
+        console.log("yess");
 
-  //       const gptPrompt = await axios.get(`${apiUrl}/api/prompt`);
-  //       console.log("gpt prompt: ", gptPrompt?.data?.result?.prompt);
-  //       console.log("filteredCompanyData: ", filteredCompanyData);
+        const gptPrompt = await axios.get(`${apiUrl}/api/prompt`);
+        console.log("gpt prompt: ", gptPrompt?.data?.result?.prompt);
+        console.log("filteredCompanyData: ", filteredCompanyData);
 
-  //       let prompt = (gptPrompt?.data?.result?.prompt).toString();
-  //       let concatenatedData = `${prompt}\n \n${JSON.stringify(
-  //         filteredCompanyData
-  //       )}`;
+        let prompt = (gptPrompt?.data?.result?.prompt).toString();
+        let concatenatedData = `${prompt}\n \n${JSON.stringify(
+          filteredCompanyData
+        )}`;
 
-  //       if (prompt) {
-  //         console.log("exist", concatenatedData);
-  //         const response = axios
-  //           .post(`${apiUrl}/api/gpt/prompt`, {
-  //             targetCompanyName: currentCompany,
-  //             description: concatenatedData,
-  //           })
-  //           .then((res) => {
-  //             console.log("response: ", res);
-  //             setPredict(res.data.response);
-  //           })
-  //           .catch((err) => console.log("err: ", err));
-  //       } else {
-  //         console.log("no exist");
-  //       }
-  //     } catch (error) {
-  //       console.log("error: ", error);
-  //     }
-  //   };
-  //   loadData();
-  // }, [currentCompany, description]);
+        if (prompt) {
+          console.log("exist", concatenatedData);
+          const response = axios
+            .post(`${apiUrl}/api/gpt/prompt`, {
+              targetCompanyName: currentCompany,
+              description: concatenatedData,
+            })
+            .then((res) => {
+              console.log("response: ", res);
+              setPredict(res.data.response);
+            })
+            .catch((err) => console.log("err: ", err));
+        } else {
+          console.log("no exist");
+        }
+      } catch (error) {
+        console.log("error: ", error);
+      }
+    };
+    loadData();
+  }, [currentCompany, description]);
 
   return (
     <div>
