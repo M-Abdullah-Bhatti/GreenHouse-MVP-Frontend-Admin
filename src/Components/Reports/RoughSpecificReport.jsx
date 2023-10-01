@@ -433,6 +433,8 @@ import { create } from "ipfs-http-client";
 import { toast } from "react-toastify";
 import { smartContract } from "../../Constants";
 import { ethers } from "ethers";
+import html2pdf from "html2pdf.js";
+import html2canvas from "html2canvas";
 
 import { formattedDate } from "../../utils/date";
 import { Margin, usePDF } from "react-to-pdf";
@@ -471,9 +473,6 @@ const RoughSpecificReport = () => {
   const [etherscanURL, setEtherscanURL] = useState("");
   const [uploadReport, setUploadReport] = useState("");
 
-  const [downloadLink, setDownloadLink] = useState("");
-  console.log("downloadLink");
-  console.log(downloadLink);
   const handlePrintReport = useReactToPrint({
     content: () => printRef.current,
   });
@@ -483,31 +482,31 @@ const RoughSpecificReport = () => {
     page: { margin: Margin.MEDIUM },
   });
 
-  const handleGeneratePDF = async () => {
-    try {
-      // Generate the PDF from the selected area
-      const pdfData = await toPDF(printRef.current);
+  // Function to capture and convert the content to a data URL
+  // const handleGeneratePDF = () => {
+  //   html2canvas(printRef.current, {
+  //     scale: 2,
+  //   }).then((canvas) => {
+  //     const dataURL = canvas.toDataURL(); // This will give you the data URL of the captured content.
+  //     // You can now use the dataURL as needed (e.g., display it or manipulate it).
+  //     console.log("Printed content data URL:", dataURL);
+  //   });
+  // };
 
-      // Log the PDF data
-      console.log("pdfData:", pdfData);
+  // Function to capture and convert the content to a data URL
+  const handleGeneratePDF = () => {
+    const printElement = printRef.current;
+    printElement.style.width = "100%"; // Set width to 100%
+    printElement.style.height = "auto"; // Set height to 100%
 
-      // Create a Blob from the PDF data
-      const pdfBlob = new Blob([pdfData], { type: "application/pdf" });
+    html2canvas(printElement, { scale: 2 }).then((canvas) => {
+      const dataURL = canvas.toDataURL();
+      console.log("Printed content data URL:", dataURL);
 
-      // Log the Blob
-      console.log("pdfBlob:", pdfBlob);
-
-      // Create a URL for the Blob
-      const pdfURL = URL.createObjectURL(pdfBlob);
-
-      // Open the PDF in a new tab
-      window.open(pdfURL, "_blank");
-
-      // Now you can store the pdfURL on your server or use it as needed
-      console.log("Generated PDF URL:", pdfURL);
-    } catch (error) {
-      console.error("Error generating PDF:", error);
-    }
+      // Reset the width and height after capturing
+      printElement.style.width = ""; // Reset width
+      printElement.style.height = ""; // Reset height
+    });
   };
 
   // console.log("targetRef");
@@ -539,8 +538,7 @@ const RoughSpecificReport = () => {
       {/* Specific Report */}
       <div
         id="element-to-convert"
-        // ref={printRef}
-        ref={targetRef}
+        ref={printRef}
         style={{
           boxShadow:
             "0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
