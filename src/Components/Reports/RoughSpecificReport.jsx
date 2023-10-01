@@ -435,8 +435,7 @@ import { smartContract } from "../../Constants";
 import { ethers } from "ethers";
 
 import { formattedDate } from "../../utils/date";
-import html2canvas from "html2canvas";
-import jsPDF from "jspdf";
+import { Margin, usePDF } from "react-to-pdf";
 
 // IPFS
 const projectId = "2V6620s2FhImATdUuY4dwIAqoI0";
@@ -463,7 +462,7 @@ const RoughSpecificReport = () => {
 
   // state variables:
   const [predict, setPredict] = useState(
-    "Please wait a few seconds while the model predicts contradiction."
+    "Please wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradiction.Please wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradictionPlease wait a few seconds while the model predicts contradiction"
   );
 
   // Print Report
@@ -479,57 +478,43 @@ const RoughSpecificReport = () => {
     content: () => printRef.current,
   });
 
-  // Function to upload report to blockchain
-  const handleSendToRegulators = async () => {
+  const { toPDF, targetRef } = usePDF({
+    filename: "usepdf-example.pdf",
+    page: { margin: Margin.MEDIUM },
+  });
+
+  const handleGeneratePDF = async () => {
     try {
-      // ====================
+      // Generate the PDF from the selected area
+      const pdfData = await toPDF(printRef.current);
 
-      const content = printRef.current;
+      // Log the PDF data
+      console.log("pdfData:", pdfData);
 
-      // const pdf = new jsPDF();
+      // Create a Blob from the PDF data
+      const pdfBlob = new Blob([pdfData], { type: "application/pdf" });
 
-      html2canvas(content).then((canvas) => {
-        const imgData = canvas.toDataURL("image/png");
-        console.log("imgData");
-        console.log(imgData);
-        // const imgWidth = 210; // A4 paper width in mm
-        // const imgHeight = (canvas.height * imgWidth) / canvas.width;
+      // Log the Blob
+      console.log("pdfBlob:", pdfBlob);
 
-        // pdf.addImage(imgData, "PNG", 0, 0, imgWidth, imgHeight);
-        // pdf.save("my-pdf.pdf");
-      });
+      // Create a URL for the Blob
+      const pdfURL = URL.createObjectURL(pdfBlob);
 
-      // ======================
+      // Open the PDF in a new tab
+      window.open(pdfURL, "_blank");
 
-      // Adding our file to ipfs
-      //   const added = await ipfs.add(uploadReport);
-      //   let reportHash = added.path;
-      //   console.log("certificateHash: ", reportHash);
-      //   setHash(reportHash);
-
-      //   // Making connection to the blockchain, getting signer wallet address and connecting to our smart contract
-      //   const provider = new ethers.providers.Web3Provider(window.ethereum);
-      //   const signer = provider.getSigner();
-      //   const contract = new ethers.Contract(
-      //     smartContract.address,
-      //     smartContract.abi,
-      //     signer
-      //   );
-
-      //   // calling our smart contract function
-      //   const tx = await contract.addImageHash(reportHash);
-      //   const receipt = await tx.wait();
-      //   const txHash = receipt.transactionHash;
-      //   const etherscanUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
-      //   setEtherscanURL(etherscanUrl);
+      // Now you can store the pdfURL on your server or use it as needed
+      console.log("Generated PDF URL:", pdfURL);
     } catch (error) {
-      toast.error(error.message);
+      console.error("Error generating PDF:", error);
     }
   };
 
-  //   const handleSendToRegulators = async () => {};
+  // console.log("targetRef");
+  // console.log(targetRef);
 
-  // update report age priority
+  // console.log("toPDF");
+  // console.log(toPDF);
 
   const [reportDataUpdate, setReportDataUpdate] = useState({
     priority: "Low",
@@ -553,7 +538,9 @@ const RoughSpecificReport = () => {
 
       {/* Specific Report */}
       <div
-        ref={printRef}
+        id="element-to-convert"
+        // ref={printRef}
+        ref={targetRef}
         style={{
           boxShadow:
             "0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
@@ -608,11 +595,21 @@ const RoughSpecificReport = () => {
 
             {/* Buttons */}
             <div className="flex gap-3 mb-8">
-              <button
+              {/* <button
                 onClick={handleSendToRegulators}
-                className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
+                className="bg-[#3FDD78] rounded-lg flex justify-center items-center px-3 border-none outline-none text-[#fff] "
               >
                 Send to regulator
+              </button> */}
+
+              <button
+                // onClick={handleSendToRegulators}
+                // onClick={toPDF}
+                onClick={handleGeneratePDF}
+                className="bg-[#3FDD78] rounded-lg px-4 pb-5 pt-3 text-center max-w-max  text-[#fff] 
+  hover:bg-[#34bb70] transition duration-300 ease-in-out"
+              >
+                Send to Regulators
               </button>
 
               <button
@@ -620,7 +617,7 @@ const RoughSpecificReport = () => {
                   setShowStep1Modify(true);
                   setShowStep0(false);
                 }}
-                className="bg-[#000000] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
+                className="bg-[#000000] rounded-lg  px-4 pb-5 pt-3  text-center max-w-max border-none outline-none text-[#fff] "
               >
                 Modify
               </button>
@@ -790,7 +787,25 @@ const RoughSpecificReport = () => {
             In 2019 we made €5 b available for green projects and last year we
             set a target for 70% of our lending to be green by 2030. We also
             became the first Irish bank to pledge to operate as carbon neutral
-            by 2030
+            by 2030 In 2019 we made €5 b available for green projects and last
+            year we set a target for 70% of our lending to be green by 2030. We
+            also became the first Irish bank to pledge to operate as carbon
+            neutral by 2030 In 2019 we made €5 b available for green projects
+            and last year we set a target for 70% of our lending to be green by
+            2030. We also became the first Irish bank to pledge to operate as
+            carbon neutral by 2030 In 2019 we made €5 b available for green
+            projects and last year we set a target for 70% of our lending to be
+            green by 2030. We also became the first Irish bank to pledge to
+            operate as carbon neutral by 2030 In 2019 we made €5 b available for
+            green projects and last year we set a target for 70% of our lending
+            to be green by 2030. We also became the first Irish bank to pledge
+            to operate as carbon neutral by 2030 In 2019 we made €5 b available
+            for green projects and last year we set a target for 70% of our
+            lending to be green by 2030. We also became the first Irish bank to
+            pledge to operate as carbon neutral by 2030 In 2019 we made €5 b
+            available for green projects and last year we set a target for 70%
+            of our lending to be green by 2030. We also became the first Irish
+            bank to pledge to operate as carbon neutral by 2030
           </p>
           <p className="text-[#6C7275] text-sm mt-3 font-semibold">
             Data source:
