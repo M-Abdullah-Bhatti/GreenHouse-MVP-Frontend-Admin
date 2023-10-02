@@ -27,11 +27,21 @@ class ReportService {
 
 
   /**
-   * getSingleReportDetail
+   * getAllPendingReports
    * @returns
    */
     async getAllPendingReports() {
     const {data} = await axios.get(`${apiUrl}/api/report/getUpdateSendToRegulators`)
+    return data;
+  }
+
+
+    /**
+   * getSingleReportDetail
+   * @returns
+   */
+    async getSpecificReport(id) {
+    const {data} = await axios.get(`${apiUrl}/api/report/getSingleReportDetail/${id}`)
     return data;
   }
 

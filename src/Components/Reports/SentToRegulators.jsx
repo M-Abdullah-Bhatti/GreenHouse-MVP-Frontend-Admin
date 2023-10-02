@@ -1,14 +1,16 @@
 import BackButton from "../Shared/BackButton";
 import { useStepsContext } from "../../Context/StateContext";
-import { useGetAllPendingReports } from "../../Hooks/reports-hooks";
+import { useGetSpecificReportDetails } from "../../Hooks/reports-hooks";
 
 // ----------------------------
 const SentToRegulators = () => {
-  const { setStep } = useStepsContext();
+  const { setStep, specificReportDetailsID } = useStepsContext();
 
   // getSingleReportDetail;
-  const { data: pendingReportData, isLoading: pendingReportLoading } =
-    useGetAllPendingReports();
+  const {
+    data: specificReportDetailsData,
+    isLoading: specificReportDetailsLoading,
+  } = useGetSpecificReportDetails(specificReportDetailsID);
 
   return (
     <div>
@@ -27,19 +29,20 @@ const SentToRegulators = () => {
         <div className="mb-7">
           <div className="flex justify-between items-center">
             <p className="mb-2 text-sm text-[#2c2d2e] font-semibold">
-              {pendingReportLoading
+              {specificReportDetailsLoading
                 ? "loading..."
-                : pendingReportData?.results[0]?.sendToRegulatorsTimeStamp &&
-                  pendingReportData?.results[0]?.sendToRegulatorsTimeStamp}
+                : specificReportDetailsData?.results
+                    ?.sendToRegulatorsTimeStamp &&
+                  specificReportDetailsData?.results?.sendToRegulatorsTimeStamp}
             </p>
 
             <img src="./assets/pending__to__review.png" alt="logo" />
           </div>
           <h1 className="mb-5 text-[#000] text-2xl font-bold">
-            {pendingReportLoading
+            {specificReportDetailsLoading
               ? "loading..."
-              : pendingReportData?.results[0]?.companyName &&
-                pendingReportData?.results[0]?.companyName}
+              : specificReportDetailsData?.results?.companyName &&
+                specificReportDetailsData?.results?.companyName}
           </h1>
           <p className="text-[#6C7275] text-base mb-1 font-semibold">
             Jurisdiction :
@@ -59,35 +62,35 @@ const SentToRegulators = () => {
                 <span className="font-bold"> Hash: </span>
                 <a
                   href={`https://gateway.pinata.cloud/ipfs/${
-                    pendingReportData?.results[0]?.IPFSHash &&
-                    pendingReportData?.results[0]?.IPFSHash
+                    specificReportDetailsData?.results?.IPFSHash &&
+                    specificReportDetailsData?.results?.IPFSHash
                   }`}
                   target="_blank"
                   rel="noreferrer"
                   className="text-[#3FDD78] font-semibold"
                 >
-                  {pendingReportLoading
+                  {specificReportDetailsLoading
                     ? "loading..."
-                    : pendingReportData?.results[0]?.IPFSHash &&
-                      pendingReportData?.results[0]?.IPFSHash}
+                    : specificReportDetailsData?.results?.IPFSHash &&
+                      specificReportDetailsData?.results?.IPFSHash}
                 </a>
               </p>
               <p className="text-[#6C7275] text-base">
                 <span className="font-bold"> Etherscan URL: </span>
                 <a
                   href={
-                    pendingReportData?.results[0]?.etherscanURL &&
-                    pendingReportData?.results[0]?.etherscanURL
+                    specificReportDetailsData?.results?.etherscanURL &&
+                    specificReportDetailsData?.results?.etherscanURL
                   }
                   target="_blank"
                   rel="noreferrer"
                   className="text-[#3FDD78] font-semibold"
                 >
                   {" "}
-                  {pendingReportLoading
+                  {specificReportDetailsLoading
                     ? "loading..."
-                    : pendingReportData?.results[0]?.etherscanURL &&
-                      pendingReportData?.results[0]?.etherscanURL}
+                    : specificReportDetailsData?.results?.etherscanURL &&
+                      specificReportDetailsData?.results?.etherscanURL}
                 </a>
               </p>
             </>
@@ -101,10 +104,10 @@ const SentToRegulators = () => {
           </p>
           <p className="font-semibold">
             {" "}
-            {pendingReportLoading
+            {specificReportDetailsLoading
               ? "loading..."
-              : pendingReportData?.results[0]?.contradiction &&
-                pendingReportData?.results[0]?.contradiction}
+              : specificReportDetailsData?.results?.contradiction &&
+                specificReportDetailsData?.results?.contradiction}
           </p>
         </div>
       </div>

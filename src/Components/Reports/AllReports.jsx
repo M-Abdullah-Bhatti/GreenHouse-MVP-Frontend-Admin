@@ -119,6 +119,7 @@ export default AllReports;
 const Report = ({ data, activeTab, pendingReportLoading }) => {
   const {
     setStep,
+    setSpecificReportDetailsID,
     rows,
     setDescription,
     sheet,
@@ -172,6 +173,7 @@ const Report = ({ data, activeTab, pendingReportLoading }) => {
       return sheetData;
     } else if (tab === 2) {
       setStep("sent_to_regulators");
+      setSpecificReportDetailsID(companyName);
     }
   };
 
@@ -207,7 +209,7 @@ const Report = ({ data, activeTab, pendingReportLoading }) => {
           <div
             key={index}
             // onClick={() => setStep("specific_report")}
-            onClick={() => handleNavigate(report?.companyName, activeTab)}
+            onClick={() => handleNavigate(report?._id, activeTab)}
             style={{
               boxShadow:
                 " 0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",

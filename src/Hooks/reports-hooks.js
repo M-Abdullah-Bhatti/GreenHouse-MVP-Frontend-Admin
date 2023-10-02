@@ -4,6 +4,12 @@ import ReportService from "../Services/reports-services";
 
 
 
+const useGetSpecificReportDetails = (id) => {
+  return useQuery({
+    queryKey: ["getSingleReportDetail"], 
+    queryFn: () => ReportService.getSpecificReport(id),
+  });
+};
 
 
 
@@ -41,4 +47,4 @@ const useUpdateReportAgePriority = (reportData) => {
 
 
 
-export { useUpdateReportAgePriority, useGetAllPendingReports};
+export { useUpdateReportAgePriority, useGetSpecificReportDetails,useGetAllPendingReports};
