@@ -4,6 +4,7 @@ import axios from "axios";
 import { useGetAllPendingReports } from "../../Hooks/reports-hooks";
 // src\Hooks\reports-hooks.js
 import { formattedDate } from "../../utils/date";
+import PriorityColor from "./PriorityColor";
 
 const AllReports = () => {
   const [activeTab, setActiveTab] = useState(1);
@@ -11,7 +12,8 @@ const AllReports = () => {
 
   const { setStep, rows, sheet } = useStepsContext();
 
-  const { data: getAllPendingReports } = useGetAllPendingReports();
+  const { data: getAllPendingReports, isLoading: pendingReportLoading } =
+    useGetAllPendingReports();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
@@ -101,7 +103,11 @@ const AllReports = () => {
           // <Report data={allReportsData} />
           <Report data={filteredData} activeTab={1} />
         ) : (
-          <Report data={getAllPendingReports} activeTab={2} />
+          <Report
+            data={getAllPendingReports}
+            activeTab={2}
+            pendingReportLoading={pendingReportLoading}
+          />
         )}
       </div>
     </div>
@@ -110,7 +116,7 @@ const AllReports = () => {
 
 export default AllReports;
 
-const Report = ({ data, activeTab }) => {
+const Report = ({ data, activeTab, pendingReportLoading }) => {
   const {
     setStep,
     rows,
@@ -122,47 +128,51 @@ const Report = ({ data, activeTab }) => {
     setCurrentCompany,
   } = useStepsContext();
 
-  const handleNavigate = async (companyName) => {
-    const sheetData = {};
+  const handleNavigate = async (companyName, tab) => {
+    if (tab === 1) {
+      const sheetData = {};
 
-    // Iterate over the keys in sheet
-    for (const key in sheet) {
-      let allText = [];
+      // Iterate over the keys in sheet
+      for (const key in sheet) {
+        let allText = [];
 
-      if (Object.hasOwnProperty.call(sheet, key)) {
-        const arrayForCurrentKey = sheet[key];
+        if (Object.hasOwnProperty.call(sheet, key)) {
+          const arrayForCurrentKey = sheet[key];
 
-        // Filter records for the specified company in the current sheet
-        let recordsForCompany = arrayForCurrentKey.filter(
-          (record) => record.Company === companyName
-        );
+          // Filter records for the specified company in the current sheet
+          let recordsForCompany = arrayForCurrentKey.filter(
+            (record) => record.Company === companyName
+          );
 
-        recordsForCompany = recordsForCompany.slice(0, 7);
+          recordsForCompany = recordsForCompany.slice(0, 7);
 
-        recordsForCompany.forEach((record) => {
-          if (record.Description) {
-            allText.push(record.Description);
-          }
-        });
+          recordsForCompany.forEach((record) => {
+            if (record.Description) {
+              allText.push(record.Description);
+            }
+          });
 
-        // Convert the array of text into a single string
-        const paragraphText = allText.join(" ");
+          // Convert the array of text into a single string
+          const paragraphText = allText.join(" ");
 
-        // Store the filtered records for the current sheet
-        sheetData[key] = paragraphText;
+          // Store the filtered records for the current sheet
+          sheetData[key] = paragraphText;
+        }
       }
+
+      // Instead of logging, you can now use sheetData wherever needed
+      console.log(sheetData);
+      console.log("===", typeof sheetData);
+
+      setFilteredCompanyData(sheetData);
+      setCurrentCompany(companyName);
+      setStep("specific_report");
+
+      // Return sheetData to use it in other parts of your code
+      return sheetData;
+    } else if (tab === 2) {
+      setStep("sent_to_regulators");
     }
-
-    // Instead of logging, you can now use sheetData wherever needed
-    console.log(sheetData);
-    console.log("===", typeof sheetData);
-
-    setFilteredCompanyData(sheetData);
-    setCurrentCompany(companyName);
-    setStep("specific_report");
-
-    // Return sheetData to use it in other parts of your code
-    return sheetData;
   };
 
   return (
@@ -170,8 +180,9 @@ const Report = ({ data, activeTab }) => {
       {activeTab === 1 &&
         data.map((report, index) => (
           <div
+            key={index}
             // onClick={() => setStep("specific_report")}
-            onClick={() => handleNavigate(report.Company)}
+            onClick={() => handleNavigate(report.Company, activeTab)}
             style={{
               boxShadow:
                 " 0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
@@ -194,22 +205,53 @@ const Report = ({ data, activeTab }) => {
       {activeTab === 2 ? (
         data?.results.map((report, index) => (
           <div
+            key={index}
             // onClick={() => setStep("specific_report")}
-            onClick={() => handleNavigate(report.companyName)}
+            onClick={() => handleNavigate(report?.companyName, activeTab)}
             style={{
               boxShadow:
                 " 0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
             }}
             className="min-w-[31%] p-4 cursor-pointer rounded-xl hover:border-[1px] hover:border-black  "
           >
-            {/* <p className="mb-2 text-sm text-[#6C7275]">{report?.year}</p> */}
-            <h1 className="mb-3 text-[#000] text-xl font-semibold">
-              {report.companyName}
+            <p className="mb-2 text-sm text-[#2c2d2e] ">
+              {pendingReportLoading
+                ? "loading..."
+                : report?.sendToRegulatorsTimeStamp &&
+                  report?.sendToRegulatorsTimeStamp}
+            </p>
+            <h1 className="mb-3 text-[#000] text-2xl font-semibold">
+              {report?.companyName}
             </h1>
-            <p className="text-[#6C7275] text-base">
+            <p className="text-[#6C7275] mr-3 font-semibold">
               Jurisdiction :
               <span className="text-[#000] font-semibold ml-2">Ireland</span>
             </p>
+
+            <div className="flex justify-start items-center ">
+              <p className="text-[#6C7275] mr-3 font-semibold">Age:</p>
+              <label
+                htmlFor="freshness"
+                className="ml-2 text-[#000] font-semibold"
+              >
+                {report?.age}
+              </label>
+            </div>
+
+            <div className="flex justify-start items-center ">
+              <p className="text-[#6C7275] mr-3 font-semibold">Priority:</p>
+
+              <div className="flex justify-start items-center">
+                <PriorityColor priority={report?.priority} />
+
+                <label
+                  htmlFor="potentialgreenwashing"
+                  className="ml-2 text-[#000] font-semibold"
+                >
+                  {report?.priority}
+                </label>
+              </div>
+            </div>
           </div>
         ))
       ) : (

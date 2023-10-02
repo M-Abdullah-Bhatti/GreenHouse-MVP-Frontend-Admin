@@ -10,6 +10,7 @@ import { ethers } from "ethers";
 
 import apiUrl from "../../utils/baseURL";
 import { formattedDate } from "../../utils/date";
+import PriorityColor from "./PriorityColor";
 
 // IPFS
 const projectId = "2V6620s2FhImATdUuY4dwIAqoI0";
@@ -115,28 +116,6 @@ const SpecificReport = () => {
     priority: "Low",
     age: "Recent",
   });
-
-  const PriorityColor = ({ priority }) => {
-    let backgroundColor;
-
-    switch (priority) {
-      case "Low":
-        backgroundColor = "green";
-        break;
-      case "Medium":
-        backgroundColor = "yellow";
-        break;
-      case "High":
-        backgroundColor = "red";
-        break;
-      default:
-        backgroundColor = "white";
-    }
-
-    return (
-      <span className="w-4 h-4 rounded-full" style={{ backgroundColor }}></span>
-    );
-  };
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
