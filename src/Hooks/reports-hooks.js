@@ -8,10 +8,10 @@ import ReportService from "../Services/reports-services";
 
 
 
-const useGetSingleReportDetails = (company) => {
+const useGetAllPendingReports = () => {
   return useQuery({
-    queryKey: ["getSingleReportDetail"], 
-    queryFn: () => ReportService.getSingleReportDetail(company),
+    queryKey: ["getUpdateSendToRegulators"], 
+    queryFn: () => ReportService.getAllPendingReports(),
   });
 };
 
@@ -41,4 +41,4 @@ const useUpdateReportAgePriority = (reportData) => {
 
 
 
-export { useUpdateReportAgePriority, useGetSingleReportDetails};
+export { useUpdateReportAgePriority, useGetAllPendingReports};

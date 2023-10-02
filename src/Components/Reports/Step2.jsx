@@ -4,6 +4,7 @@ import BackButton from "../Shared/BackButton";
 import { useStepsContext } from "../../Context/StateContext";
 import Loading from "../Shared/Loading";
 import * as XLSX from "xlsx"; // Import the xlsx library
+import { toast } from "react-toastify";
 
 const Step2 = () => {
   const fileInputRef = useRef(null);
@@ -107,6 +108,10 @@ const Step2 = () => {
   };
 
   const handleFileConfirm = () => {
+    if (selectedFiles.length === 0) {
+      return toast.error("Please upload dataset first");
+    }
+
     setProcessing(true);
     processDataFromFiles();
     setTimeout(() => {

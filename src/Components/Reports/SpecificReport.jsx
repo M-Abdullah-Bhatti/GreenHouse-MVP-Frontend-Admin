@@ -84,16 +84,21 @@ const SpecificReport = () => {
   };
   // http://localhost:5000
   const handleSendToRegulators = async () => {
+    if (!etherscanURL) {
+      return toast.error("Please upload report on IPFS first");
+    }
+
     axios
-      // .post(`${apiUrl}/api/report/updateSendToRegulators`, {
-      .post(`http://localhost:5000/api/report/updateSendToRegulators`, {
-        // companyName: "hello1111111",
+      .post(`${apiUrl}/api/report/updateSendToRegulators`, {
         companyName: currentCompany,
         contradiction: predict,
         claims: JSON.stringify(filteredCompanyData),
         age: reportDataUpdate.age,
         priority: reportDataUpdate.priority,
-        timeStamp: formattedDate,
+        sentToRegulators: "true",
+        sendToRegulatorsTimeStamp: formattedDate,
+        IPFSHash: hash,
+        etherscanURL,
       })
       .then((res) => {
         console.log("res: ", res);
@@ -110,6 +115,28 @@ const SpecificReport = () => {
     priority: "Low",
     age: "Recent",
   });
+
+  const PriorityColor = ({ priority }) => {
+    let backgroundColor;
+
+    switch (priority) {
+      case "Low":
+        backgroundColor = "green";
+        break;
+      case "Medium":
+        backgroundColor = "yellow";
+        break;
+      case "High":
+        backgroundColor = "red";
+        break;
+      default:
+        backgroundColor = "white";
+    }
+
+    return (
+      <span className="w-4 h-4 rounded-full" style={{ backgroundColor }}></span>
+    );
+  };
 
   const handleOnChange = (e) => {
     const { name, value } = e.target;
@@ -194,6 +221,38 @@ const SpecificReport = () => {
               2022 Sustainability Report, Twitter post 2021
             </span>
           </p>
+
+          {/* Links */}
+          <div className="mb-5 mt-2">
+            {hash && (
+              <>
+                <p className="mb-1  text-[#6C7275] text-base font-semibold">
+                  <span className="font-bold"> Hash: </span>
+                  <a
+                    href={`https://gateway.pinata.cloud/ipfs/${hash}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#3FDD78]"
+                  >
+                    {" "}
+                    {hash}
+                  </a>
+                </p>
+                <p className=" text-[#6C7275] text-base font-semibold">
+                  <span className="font-bold"> Etherscan URL: </span>
+                  <a
+                    href={etherscanURL}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="text-[#3FDD78]"
+                  >
+                    {" "}
+                    {etherscanURL}{" "}
+                  </a>
+                </p>
+              </>
+            )}
+          </div>
         </div>
 
         {/* Verdict */}
@@ -215,9 +274,13 @@ const SpecificReport = () => {
             <div className="flex justify-start items-center mb-7">
               <p className="text-[#6C7275] mr-3 font-semibold">Priority:</p>
 
-              <label htmlFor="potentialgreenwashing" className="ml-2">
-                {reportDataUpdate.priority}
-              </label>
+              <div className="flex justify-start items-center">
+                <PriorityColor priority={reportDataUpdate.priority} />
+
+                <label htmlFor="potentialgreenwashing" className="ml-2">
+                  {reportDataUpdate.priority}
+                </label>
+              </div>
             </div>
 
             {/* Buttons */}
@@ -369,32 +432,6 @@ const SpecificReport = () => {
           </div>
         )}
 
-        {/* Links */}
-        <div className="my-5">
-          {hash && (
-            <>
-              <p className="mb-1 text-sm">
-                <span className="font-bold"> Hash: </span>
-                <a
-                  href={`https://gateway.pinata.cloud/ipfs/${hash}`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  {" "}
-                  {hash}
-                </a>
-              </p>
-              <p className="text-sm">
-                <span className="font-bold"> Etherscan URL: </span>
-                <a href={etherscanURL} target="_blank" rel="noreferrer">
-                  {" "}
-                  {etherscanURL}{" "}
-                </a>
-              </p>
-            </>
-          )}
-        </div>
-
         {/* Claims */}
         {/* <div>
           <p className="text-[#6C7275] font-semibold mb-3">
@@ -411,6 +448,7 @@ const SpecificReport = () => {
             <span className="text-[#000] font-semibold ml-2">Twitter</span>
           </p>
         </div> */}
+
         <div>
           <p className="text-[#6C7275] font-semibold mb-3">
             Sustainability claims:
@@ -433,16 +471,6 @@ const SpecificReport = () => {
               );
             }
           })}
-          {/* <p className="font-semibold text-[#000]">
-            In 2019 we made €5 b available for green projects and last year we
-            set a target for 70% of our lending to be green by 2030. We also
-            became the first Irish bank to pledge to operate as carbon neutral
-            by 2030
-          </p>
-          <p className="text-[#6C7275] text-sm mt-3 font-semibold">
-            Data source:
-            <span className="text-[#000] font-semibold ml-2">Twitter</span>
-          </p> */}
         </div>
       </div>
 

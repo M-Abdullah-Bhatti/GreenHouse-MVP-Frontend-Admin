@@ -1,41 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { allReportsData, allReportsSentToRegulatorsData } from "../../data";
 import { useStepsContext } from "../../Context/StateContext";
 import axios from "axios";
+import { useGetAllPendingReports } from "../../Hooks/reports-hooks";
+// src\Hooks\reports-hooks.js
 import { formattedDate } from "../../utils/date";
 
 const AllReports = () => {
   const [activeTab, setActiveTab] = useState(1);
-  const [data, setData] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
-  const [reportsSentToRegulators, setReportsSentToRegulators] = useState([]);
-  // console.log("================");
-  // console.log(reportsSentToRegulators);
-  // console.log(filteredData);
 
   const { setStep, rows, sheet } = useStepsContext();
+
+  const { data: getAllPendingReports } = useGetAllPendingReports();
 
   const handleTabClick = (tab) => {
     setActiveTab(tab);
   };
-
-  // FetchingAllReportsSentToRegulators
-  useEffect(() => {
-    const fetchReportsSentToRegulators = async () => {
-      axios
-        .get(
-          "https://vast-rose-bonobo-tux.cyclic.cloud/api/report/getUpdateSendToRegulators"
-        )
-        .then((response) => {
-          setReportsSentToRegulators(response?.data?.results);
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error);
-        });
-    };
-
-    fetchReportsSentToRegulators();
-  }, []);
 
   useEffect(() => {
     const loadData = () => {
@@ -121,7 +101,7 @@ const AllReports = () => {
           // <Report data={allReportsData} />
           <Report data={filteredData} activeTab={1} />
         ) : (
-          <Report data={reportsSentToRegulators} activeTab={2} />
+          <Report data={getAllPendingReports} activeTab={2} />
         )}
       </div>
     </div>
@@ -187,8 +167,8 @@ const Report = ({ data, activeTab }) => {
 
   return (
     <>
-      {data.map((report, index) =>
-        activeTab === 1 ? (
+      {activeTab === 1 &&
+        data.map((report, index) => (
           <div
             // onClick={() => setStep("specific_report")}
             onClick={() => handleNavigate(report.Company)}
@@ -209,7 +189,10 @@ const Report = ({ data, activeTab }) => {
               </span>
             </p>
           </div>
-        ) : (
+        ))}
+
+      {activeTab === 2 ? (
+        data?.results.map((report, index) => (
           <div
             // onClick={() => setStep("specific_report")}
             onClick={() => handleNavigate(report.companyName)}
@@ -219,7 +202,7 @@ const Report = ({ data, activeTab }) => {
             }}
             className="min-w-[31%] p-4 cursor-pointer rounded-xl hover:border-[1px] hover:border-black  "
           >
-            <p className="mb-2 text-sm text-[#6C7275]">{report?.year}</p>
+            {/* <p className="mb-2 text-sm text-[#6C7275]">{report?.year}</p> */}
             <h1 className="mb-3 text-[#000] text-xl font-semibold">
               {report.companyName}
             </h1>
@@ -228,7 +211,9 @@ const Report = ({ data, activeTab }) => {
               <span className="text-[#000] font-semibold ml-2">Ireland</span>
             </p>
           </div>
-        )
+        ))
+      ) : (
+        <p>No reports sent to regulators</p>
       )}
     </>
   );

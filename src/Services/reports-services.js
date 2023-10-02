@@ -30,8 +30,8 @@ class ReportService {
    * getSingleReportDetail
    * @returns
    */
-    async getSingleReportDetail(company) {
-    const {data} = await axios.get(`${apiUrl}/api/report/getSingleReportDetail?company=${company}`)
+    async getAllPendingReports() {
+    const {data} = await axios.get(`${apiUrl}/api/report/getUpdateSendToRegulators`)
     return data;
   }
 
