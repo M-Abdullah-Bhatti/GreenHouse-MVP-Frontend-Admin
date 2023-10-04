@@ -18,6 +18,8 @@ const Reports = () => {
       {step === "all_reports" && <AllReports />}
       {step === "specific_report" && <SpecificReport />}
       {step === "sent_to_regulators" && <SentToRegulators />}
+      {step === "rough_report" && <RoughSpecificReport />}
+
       {/* <SpecificReport /> */}
     </div>
   );

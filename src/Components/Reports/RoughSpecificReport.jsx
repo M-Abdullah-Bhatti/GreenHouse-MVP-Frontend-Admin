@@ -438,6 +438,7 @@ import html2canvas from "html2canvas";
 
 import { formattedDate } from "../../utils/date";
 import { Margin, usePDF } from "react-to-pdf";
+import { domToPng } from "modern-screenshot";
 
 // IPFS
 const projectId = "2V6620s2FhImATdUuY4dwIAqoI0";
@@ -473,47 +474,21 @@ const RoughSpecificReport = () => {
   const [etherscanURL, setEtherscanURL] = useState("");
   const [uploadReport, setUploadReport] = useState("");
 
-  const handlePrintReport = useReactToPrint({
-    content: () => printRef.current,
-  });
-
-  const { toPDF, targetRef } = usePDF({
-    filename: "usepdf-example.pdf",
-    page: { margin: Margin.MEDIUM },
-  });
-
-  // Function to capture and convert the content to a data URL
+  // // Function to capture and convert the content to a data URL
   // const handleGeneratePDF = () => {
-  //   html2canvas(printRef.current, {
-  //     scale: 2,
-  //   }).then((canvas) => {
-  //     const dataURL = canvas.toDataURL(); // This will give you the data URL of the captured content.
-  //     // You can now use the dataURL as needed (e.g., display it or manipulate it).
+  //   const printElement = printRef.current;
+  //   printElement.style.width = "100%"; // Set width to 100%
+  //   printElement.style.height = "auto"; // Set height to 100%
+
+  //   html2canvas(printElement, { scale: 2 }).then((canvas) => {
+  //     const dataURL = canvas.toDataURL();
   //     console.log("Printed content data URL:", dataURL);
+
+  //     // Reset the width and height after capturing
+  //     printElement.style.width = ""; // Reset width
+  //     printElement.style.height = ""; // Reset height
   //   });
   // };
-
-  // Function to capture and convert the content to a data URL
-  const handleGeneratePDF = () => {
-    const printElement = printRef.current;
-    printElement.style.width = "100%"; // Set width to 100%
-    printElement.style.height = "auto"; // Set height to 100%
-
-    html2canvas(printElement, { scale: 2 }).then((canvas) => {
-      const dataURL = canvas.toDataURL();
-      console.log("Printed content data URL:", dataURL);
-
-      // Reset the width and height after capturing
-      printElement.style.width = ""; // Reset width
-      printElement.style.height = ""; // Reset height
-    });
-  };
-
-  // console.log("targetRef");
-  // console.log(targetRef);
-
-  // console.log("toPDF");
-  // console.log(toPDF);
 
   const [reportDataUpdate, setReportDataUpdate] = useState({
     priority: "Low",
@@ -529,6 +504,18 @@ const RoughSpecificReport = () => {
     }));
 
     console.log("final: ", reportDataUpdate);
+  };
+
+  const captureDivToPng = async () => {
+    const element = document.querySelector("#element-to-convert");
+    if (element) {
+      const dataUrl = await domToPng(element);
+      console.log(dataUrl);
+      return dataUrl;
+    } else {
+      console.error("Element not found");
+      return null;
+    }
   };
 
   return (
@@ -603,7 +590,8 @@ const RoughSpecificReport = () => {
               <button
                 // onClick={handleSendToRegulators}
                 // onClick={toPDF}
-                onClick={handleGeneratePDF}
+                // onClick={handleGeneratePDF}
+                onClick={captureDivToPng}
                 className="bg-[#3FDD78] rounded-lg px-4 pb-5 pt-3 text-center max-w-max  text-[#fff] 
   hover:bg-[#34bb70] transition duration-300 ease-in-out"
               >
@@ -827,7 +815,7 @@ const RoughSpecificReport = () => {
         <div className="my-10">
           <h1 className="font-bold mb-2">Step 1:</h1>
           <button
-            onClick={handlePrintReport}
+            // onClick={handlePrintReport}
             className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
           >
             Download Report
