@@ -48,13 +48,13 @@ const SpecificReport = () => {
     try {
       const element = document.querySelector("#element-to-convert");
       const dataUrl = await domToPng(element);
-      // console.log(dataUrl);
 
-      // Adding our file to ipfs
-      const added = await ipfs.add(dataUrl);
-      let reportHash = added.path;
-      console.log("certificateHash: ", reportHash);
-      setHash(reportHash);
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
+      const file = new File([blob], "file.png", { type: "image/png" });
+      const imghash = await ipfs.add(file);
+      setHash(imghash.path);
+      console.log(`https://ipfs.io/ipfs/${imghash.path}`);
 
       // Making connection to the blockchain, getting signer wallet address and connecting to our smart contract
       const provider = new ethers.providers.Web3Provider(window.ethereum);
@@ -66,7 +66,9 @@ const SpecificReport = () => {
       );
 
       // calling our smart contract function
-      const tx = await contract.addImageHash(reportHash);
+      const tx = await contract.addImageHash(
+        `https://ipfs.io/ipfs/${imghash.path}`
+      );
       const receipt = await tx.wait();
       const txHash = receipt.transactionHash;
       const etherscanUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
@@ -82,8 +84,8 @@ const SpecificReport = () => {
           priority: reportDataUpdate.priority,
           sentToRegulators: "true",
           sendToRegulatorsTimeStamp: formattedDate,
-          IPFSHash: hash,
-          etherscanURL,
+          IPFSHash: imghash.path,
+          etherscanURL: etherscanUrl,
         })
         .then((res) => {
           console.log("res: ", res);
@@ -182,7 +184,7 @@ const SpecificReport = () => {
           </p>
 
           <p className="text-[#6C7275] text-base font-semibold">
-            Data sources: :
+            Data sources:
             <span className="text-[#000] font-semibold ml-2">
               2022 Sustainability Report, Twitter post 2021
             </span>
@@ -195,10 +197,11 @@ const SpecificReport = () => {
                 <p className="mb-1  text-[#6C7275] text-base font-semibold">
                   <span className="font-bold"> Hash: </span>
                   <a
-                    href={`https://gateway.pinata.cloud/ipfs/${hash}`}
+                    // href={`https://gateway.pinata.cloud/ipfs/${hash}`}
+                    href={`https://ipfs.io/ipfs/${hash}`}
                     target="_blank"
                     rel="noreferrer"
-                    className="text-[#3FDD78]"
+                    className="text-[#3FDD78] cursor-pointer"
                   >
                     {" "}
                     {hash}
