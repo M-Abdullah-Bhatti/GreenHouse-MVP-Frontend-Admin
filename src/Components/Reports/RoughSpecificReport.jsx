@@ -557,7 +557,7 @@ const RoughSpecificReport = () => {
         {/* Verdict */}
         <div className="bg-[#F3F5F7] p-3 rounded-md mb-7">
           <p className="text-[#6C7275] mb-3 font-semibold">Verdict:</p>
-          <p className="font-semibold">{predict}</p>
+          <p className="font-semibold text-[15px]">{predict}</p>
         </div>
 
         {/* Stats */}
@@ -592,7 +592,7 @@ const RoughSpecificReport = () => {
                 // onClick={toPDF}
                 // onClick={handleGeneratePDF}
                 onClick={captureDivToPng}
-                className="bg-[#3FDD78] rounded-lg px-4 pb-5 pt-3 text-center max-w-max  text-[#fff] 
+                className="bg-[#3FDD78] rounded-lg px-4 py-3 text-center max-w-max  text-[#fff] 
   hover:bg-[#34bb70] transition duration-300 ease-in-out"
               >
                 Send to Regulators
@@ -603,7 +603,7 @@ const RoughSpecificReport = () => {
                   setShowStep1Modify(true);
                   setShowStep0(false);
                 }}
-                className="bg-[#000000] rounded-lg  px-4 pb-5 pt-3  text-center max-w-max border-none outline-none text-[#fff] "
+                className="bg-[#000000] rounded-lg  px-4 py-3  text-center max-w-max border-none outline-none text-[#fff] "
               >
                 Modify
               </button>
@@ -769,7 +769,7 @@ const RoughSpecificReport = () => {
             Sustainability claims:
           </p>
 
-          <p className="font-semibold text-[#000]">
+          <p className="font-semibold text-[#000] text-[15px]">
             In 2019 we made €5 b available for green projects and last year we
             set a target for 70% of our lending to be green by 2030. We also
             became the first Irish bank to pledge to operate as carbon neutral

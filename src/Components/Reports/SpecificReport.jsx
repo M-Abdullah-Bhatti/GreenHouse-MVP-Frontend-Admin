@@ -1,7 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import BackButton from "../Shared/BackButton";
 import { useStepsContext } from "../../Context/StateContext";
-import { useReactToPrint } from "react-to-print";
 import { create } from "ipfs-http-client";
 import axios from "axios";
 import { toast } from "react-toastify";
@@ -11,6 +10,7 @@ import { ethers } from "ethers";
 import apiUrl from "../../utils/baseURL";
 import { formattedDate } from "../../utils/date";
 import PriorityColor from "./PriorityColor";
+import { domToPng } from "modern-screenshot";
 
 // IPFS
 const projectId = "2V6620s2FhImATdUuY4dwIAqoI0";
@@ -41,25 +41,17 @@ const SpecificReport = () => {
   );
 
   // Print Report
-  const printRef = useRef();
   const [hash, setHash] = useState("");
   const [etherscanURL, setEtherscanURL] = useState("");
-  const [uploadReport, setUploadReport] = useState("");
 
-  const handlePrintReport = useReactToPrint({
-    content: () => printRef.current,
-  });
-
-  // Function to upload report to blockchain
-  const handleReportUpload = async () => {
+  const handleSendToRegulators = async () => {
     try {
-      if (!uploadReport) {
-        toast.error("Please select a report to upload.");
-        return;
-      }
+      const element = document.querySelector("#element-to-convert");
+      const dataUrl = await domToPng(element);
+      // console.log(dataUrl);
 
       // Adding our file to ipfs
-      const added = await ipfs.add(uploadReport);
+      const added = await ipfs.add(dataUrl);
       let reportHash = added.path;
       console.log("certificateHash: ", reportHash);
       setHash(reportHash);
@@ -79,35 +71,30 @@ const SpecificReport = () => {
       const txHash = receipt.transactionHash;
       const etherscanUrl = `https://sepolia.etherscan.io/tx/${txHash}`;
       setEtherscanURL(etherscanUrl);
+
+      // Sending to regulators
+      axios
+        .post(`${apiUrl}/api/report/updateSendToRegulators`, {
+          companyName: currentCompany,
+          contradiction: predict,
+          claims: JSON.stringify(filteredCompanyData),
+          age: reportDataUpdate.age,
+          priority: reportDataUpdate.priority,
+          sentToRegulators: "true",
+          sendToRegulatorsTimeStamp: formattedDate,
+          IPFSHash: hash,
+          etherscanURL,
+        })
+        .then((res) => {
+          console.log("res: ", res);
+          toast.success("Report has been sent to regulators");
+        })
+        .catch((err) => {
+          console.log("err: ", err);
+        });
     } catch (error) {
       toast.error(error.message);
     }
-  };
-  // http://localhost:5000
-  const handleSendToRegulators = async () => {
-    if (!etherscanURL) {
-      return toast.error("Please upload report on IPFS first");
-    }
-
-    axios
-      .post(`${apiUrl}/api/report/updateSendToRegulators`, {
-        companyName: currentCompany,
-        contradiction: predict,
-        claims: JSON.stringify(filteredCompanyData),
-        age: reportDataUpdate.age,
-        priority: reportDataUpdate.priority,
-        sentToRegulators: "true",
-        sendToRegulatorsTimeStamp: formattedDate,
-        IPFSHash: hash,
-        etherscanURL,
-      })
-      .then((res) => {
-        console.log("res: ", res);
-        toast.success("Report has been sent to regulators");
-      })
-      .catch((err) => {
-        console.log("err: ", err);
-      });
   };
 
   // update report age priority
@@ -173,7 +160,7 @@ const SpecificReport = () => {
 
       {/* Specific Report */}
       <div
-        ref={printRef}
+        id="element-to-convert"
         style={{
           boxShadow:
             "0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
@@ -182,7 +169,7 @@ const SpecificReport = () => {
       >
         {/* Top */}
 
-        <div className="mb-7">
+        <div className="mb-5">
           <p className="mb-2 text-sm text-[#2c2d2e] font-semibold">
             {formattedDate}
           </p>
@@ -235,9 +222,9 @@ const SpecificReport = () => {
         </div>
 
         {/* Verdict */}
-        <div className="bg-[#F3F5F7] p-3 rounded-md mb-7">
+        <div className="bg-[#F3F5F7] p-3 rounded-md mb-5">
           <p className="text-[#6C7275] mb-3 font-semibold">Verdict:</p>
-          <p className="font-semibold">{predict}</p>
+          <p className="font-semibold text-[15px]">{predict}</p>
         </div>
 
         {/* Stats */}
@@ -250,7 +237,7 @@ const SpecificReport = () => {
               </label>
             </div>
 
-            <div className="flex justify-start items-center mb-7">
+            <div className="flex justify-start items-center mb-5">
               <p className="text-[#6C7275] mr-3 font-semibold">Priority:</p>
 
               <div className="flex justify-start items-center">
@@ -263,7 +250,7 @@ const SpecificReport = () => {
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-3 mb-8">
+            <div className="flex gap-3 mb-5">
               <button
                 onClick={handleSendToRegulators}
                 className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
@@ -335,7 +322,7 @@ const SpecificReport = () => {
               </div>
             </div>
 
-            <div className="flex justify-start items-center mb-7">
+            <div className="flex justify-start items-center mb-5">
               <p className="text-[#6C7275] mr-3 font-semibold">Priority:</p>
 
               <div className="flex justify-start items-start gap-5">
@@ -384,7 +371,7 @@ const SpecificReport = () => {
             </div>
 
             {/* Buttons */}
-            <div className="flex gap-3 mb-8">
+            <div className="flex gap-3 mb-5">
               <button
                 // onClick={handleUpdateAgePriority}
                 onClick={() => {
@@ -436,11 +423,11 @@ const SpecificReport = () => {
             if (value) {
               return (
                 <>
-                  <p className="font-semibold text-[#000]">
+                  <p className="font-semibold text-[#000] text-[15px]">
                     {value.slice(0, 250)}
                     {value.length > 250 && "..."}
                   </p>
-                  <p className="text-[#6C7275] text-sm mt-3 font-semibold mb-4">
+                  <p className="text-[#6C7275] text-sm mt-2 font-semibold mb-3">
                     Data source:
                     <span className="text-[#000] font-semibold ml-2 ">
                       {key}
@@ -450,48 +437,6 @@ const SpecificReport = () => {
               );
             }
           })}
-        </div>
-      </div>
-
-      {/* Upload Report */}
-      <div
-        style={{
-          boxShadow:
-            "0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
-        }}
-        className="w-[80%] mx-auto my-10 p-5 rounded-xl"
-      >
-        <h1>
-          <span>Note: </span>To upload a report to IPFS first download the
-          report then upload that report to IPFS
-        </h1>
-        <div className="my-10">
-          <h1 className="font-bold mb-2">Step 1:</h1>
-          <button
-            onClick={handlePrintReport}
-            className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
-          >
-            Download Report
-          </button>
-        </div>
-
-        <div>
-          <h1 className="mb-2 font-bold">Step 2:</h1>
-          <div className="mb-5">
-            <input
-              type="file"
-              // className="bg-gray-300 w-60 h-20 rounded-lg cursor-pointer"
-              className="bg-[#3FDD78]-500 hover:bg-[#3FDD78]-900 text-white py-2 px-4 rounded-lg cursor-pointer inline-block"
-              onChange={(e) => setUploadReport(e.target.files[0])}
-            />
-          </div>
-
-          <button
-            onClick={handleReportUpload}
-            className="bg-[#3FDD78] rounded-lg  py-3 px-3 border-none outline-none text-[#fff] "
-          >
-            Upload Report to IPFS
-          </button>
         </div>
       </div>
     </div>
