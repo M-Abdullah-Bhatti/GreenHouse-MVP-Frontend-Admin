@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
+import apiUrl from "../utils/baseURL";
 
 const defaultPrompt =
   "Identify any inconsistencies for ${targetCompanyName} within the data across 'InsigAI,' 'Twitter,' and 'Carbon offsets' sheets. Report conflicting details or misalignments between these sources, if any, in a concise manner. Keep the response within 12 lines.";
@@ -11,7 +12,7 @@ const Settings = () => {
 
   useEffect(() => {
     const loadData = async () => {
-      const gptPrompt = await axios.get(`http://localhost:5000/api/prompt`);
+      const gptPrompt = await axios.get(`${apiUrl}/api/prompt`);
       console.log("--", gptPrompt?.data?.result?.prompt);
       setPromptText(gptPrompt?.data?.result?.prompt);
     };
@@ -21,7 +22,7 @@ const Settings = () => {
   const handleSubmit = async () => {
     console.log("promptText", promptText);
     const res = axios
-      .put("http://localhost:5000/api/prompt/updatePrompt", {
+      .put(`${apiUrl}/api/prompt/updatePrompt`, {
         prompt: promptText,
       })
       .then((res) => {
