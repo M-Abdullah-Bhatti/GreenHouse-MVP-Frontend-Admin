@@ -86,10 +86,14 @@ const SpecificReport = () => {
           sendToRegulatorsTimeStamp: formattedDate,
           IPFSHash: imghash.path,
           etherscanURL: etherscanUrl,
+          dataSources: Object.keys(filteredCompanyData)
+            .filter((key) => filteredCompanyData[key])
+            .join(", "),
         })
         .then((res) => {
           console.log("res: ", res);
           toast.success("Report has been sent to regulators");
+          setStep("step1");
         })
         .catch((err) => {
           console.log("err: ", err);
