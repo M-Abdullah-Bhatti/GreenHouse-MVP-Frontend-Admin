@@ -10,7 +10,19 @@ const Header = () => {
       <div className="flex justify-between items-center  py-5 w-[90%] mx-auto ">
         {/* Left */}
         <div className="flex justify-between gap-20 items-center">
-          <img src="/assets/logo.png" alt="logo" />
+          <div className="flex justify-center items-center gap-3">
+            <img
+              src="/assets/logo.png"
+              alt="logo"
+              className="w-[60px] object-cover"
+            />
+            <div>
+              <h1 className="text-[#fff] text-[13px] leading-4 mb-[1px] font-semibold">
+                Greenwashing <br /> Identifier
+              </h1>
+              <p className="text-[#dfdddd] text-[11px]">By ImpactScope</p>
+            </div>
+          </div>
 
           <div className="space-x-5 ">
             <Link
