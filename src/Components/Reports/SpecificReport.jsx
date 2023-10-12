@@ -186,13 +186,10 @@ const SpecificReport = () => {
           <p className="text-[#6C7275] text-base font-semibold">
             Data sources:
             <span className="text-[#000] font-semibold ml-2">
-              {/* 2022 Sustainability Report, Twitter post 2021 */}
-
-              {Object.entries(filteredCompanyData).map(([key, value]) => {
-                if (value) {
-                  return { key };
-                }
-              })}
+              {filteredCompanyData &&
+                Object.keys(filteredCompanyData)
+                  .filter((key) => filteredCompanyData[key])
+                  .join(", ")}
             </span>
           </p>
 
