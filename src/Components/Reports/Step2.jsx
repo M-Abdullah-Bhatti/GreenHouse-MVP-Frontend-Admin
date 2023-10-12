@@ -137,7 +137,7 @@ const Step2 = () => {
                 Identify potential Greenwashing on the fly
               </h1>
               <p className="text-[#0000007f] text-lg font-semibold mb-7">
-                Download the data source file to get started
+                Upload a data source file to get started
               </p>
               {/* File Upload */}
               <div>

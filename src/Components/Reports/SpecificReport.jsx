@@ -233,7 +233,9 @@ const SpecificReport = () => {
 
         {/* Verdict */}
         <div className="bg-[#F3F5F7] p-3 rounded-md mb-5">
-          <p className="text-[#6C7275] mb-3 font-semibold">Verdict:</p>
+          <p className="text-[#6C7275] mb-3 font-semibold">
+            Summary of conclusions:
+          </p>
           <p className="font-semibold text-[15px]">{predict}</p>
         </div>
 

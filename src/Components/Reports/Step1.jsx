@@ -11,7 +11,7 @@ const Step1 = () => {
           Just empty boxes here
         </h1>
         <p className="text-[#6c72757f] mb-7">
-          Upload source file to generate Greenwashing reports.
+          Upload source file to generate greenwashing reports.
         </p>
         <button
           onClick={() => setStep("step2")}
