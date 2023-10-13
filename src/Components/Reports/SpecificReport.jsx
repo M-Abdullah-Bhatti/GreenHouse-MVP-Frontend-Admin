@@ -11,6 +11,7 @@ import apiUrl from "../../utils/baseURL";
 import { formattedDate } from "../../utils/date";
 import PriorityColor from "./PriorityColor";
 import { domToPng } from "modern-screenshot";
+import { useAddress } from "@thirdweb-dev/react";
 
 // IPFS
 const projectId = "2V6620s2FhImATdUuY4dwIAqoI0";
@@ -30,6 +31,8 @@ const ipfs = create({
 
 // ----------------------------
 const SpecificReport = () => {
+  const walletAddress = useAddress();
+
   const [showStep0, setShowStep0] = useState(true);
   const [showStep1Modify, setShowStep1Modify] = useState(false);
   const {
@@ -50,6 +53,10 @@ const SpecificReport = () => {
   const [etherscanURL, setEtherscanURL] = useState("");
 
   const handleSendToRegulators = async () => {
+    if (!walletAddress) {
+      return toast.error("Please connect your wallet first");
+    }
+
     try {
       const element = document.querySelector("#element-to-convert");
       const dataUrl = await domToPng(element);
