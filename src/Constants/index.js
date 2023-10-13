@@ -1,20 +1,7 @@
 export const smartContract= 
     {
-        address:"0x868DCBDe070e9Cf4eA784F5487d7dF973299F5f4",
+        address:"0x8175960dA79C379bFa864B732613722E86eb6771",
         abi:  [
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_admin",
-				"type": "address"
-			}
-		],
-		"name": "addAdmin",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
 	{
 		"inputs": [
 			{
@@ -24,19 +11,6 @@ export const smartContract=
 			}
 		],
 		"name": "addImageHash",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_admin",
-				"type": "address"
-			}
-		],
-		"name": "removeAdmin",
 		"outputs": [],
 		"stateMutability": "nonpayable",
 		"type": "function"
@@ -90,29 +64,7 @@ export const smartContract=
 		],
 		"stateMutability": "view",
 		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "_address",
-				"type": "address"
-			}
-		],
-		"name": "isAdmin",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
 	}
 ]
-    
-    }
-
-
+	}
    
