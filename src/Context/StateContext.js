@@ -12,6 +12,8 @@ export function StepsProvider({ children }) {
   const [showAllReports, setShowAllReports] = useState(false);
   const [rows, setRows] = useState();
   const [currentCompany, setCurrentCompany] = useState();
+  const [currentCountry, setCurrentCountry] = useState();
+
   const [description, setDescription] = useState();
   const [sheet, setSheet] = useState();
   const [filteredCompanyData, setFilteredCompanyData] = useState();
@@ -37,6 +39,8 @@ export function StepsProvider({ children }) {
         setSheet,
         filteredCompanyData,
         setFilteredCompanyData,
+        currentCountry,
+        setCurrentCountry,
       }}
     >
       {children}

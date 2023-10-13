@@ -127,9 +127,10 @@ const Report = ({ data, activeTab, pendingReportLoading }) => {
     currentCountry,
     filteredCompanyData,
     setCurrentCompany,
+    setCurrentCountry,
   } = useStepsContext();
 
-  const handleNavigate = async (companyName, tab) => {
+  const handleNavigate = async (companyName, Jurisdiction, tab) => {
     if (tab === 1) {
       const sheetData = {};
 
@@ -167,6 +168,7 @@ const Report = ({ data, activeTab, pendingReportLoading }) => {
 
       setFilteredCompanyData(sheetData);
       setCurrentCompany(companyName);
+      setCurrentCountry(Jurisdiction);
       setStep("specific_report");
 
       // Return sheetData to use it in other parts of your code
@@ -184,7 +186,9 @@ const Report = ({ data, activeTab, pendingReportLoading }) => {
           <div
             key={index}
             // onClick={() => setStep("specific_report")}
-            onClick={() => handleNavigate(report.Company, activeTab)}
+            onClick={() =>
+              handleNavigate(report.Company, report.Jurisdiction, activeTab)
+            }
             style={{
               boxShadow:
                 " 0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",

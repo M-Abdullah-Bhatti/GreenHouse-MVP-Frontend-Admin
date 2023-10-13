@@ -32,8 +32,13 @@ const ipfs = create({
 const SpecificReport = () => {
   const [showStep0, setShowStep0] = useState(true);
   const [showStep1Modify, setShowStep1Modify] = useState(false);
-  const { setStep, currentCompany, description, filteredCompanyData } =
-    useStepsContext();
+  const {
+    setStep,
+    currentCompany,
+    description,
+    filteredCompanyData,
+    currentCountry,
+  } = useStepsContext();
 
   // state variables:
   const [predict, setPredict] = useState(
@@ -184,7 +189,9 @@ const SpecificReport = () => {
           </h1>
           <p className="text-[#6C7275] text-base mb-1 font-semibold">
             Jurisdiction :
-            <span className="text-[#000] font-semibold ml-2">Ireland</span>
+            <span className="text-[#000] font-semibold ml-2">
+              {currentCountry}
+            </span>
           </p>
 
           <p className="text-[#6C7275] text-base font-semibold">
