@@ -213,7 +213,7 @@ const Report = ({ data, activeTab, pendingReportLoading }) => {
           <div
             key={index}
             // onClick={() => setStep("specific_report")}
-            onClick={() => handleNavigate(report?._id, activeTab)}
+            onClick={() => handleNavigate(report?._id, "", activeTab)}
             style={{
               boxShadow:
                 " 0px 33px 32px -16px rgba(0, 0, 0, 0.10), 0px 0px 16px 4px rgba(0, 0, 0, 0.04)",
@@ -231,7 +231,11 @@ const Report = ({ data, activeTab, pendingReportLoading }) => {
             </h1>
             <p className="text-[#6C7275] mr-3 font-semibold">
               Jurisdiction :
-              <span className="text-[#000] font-semibold ml-2">Ireland</span>
+              <span className="text-[#000] font-semibold ml-2">
+                {pendingReportLoading
+                  ? "loading..."
+                  : report?.jurisdiction && report?.jurisdiction}
+              </span>
             </p>
 
             <div className="flex justify-start items-center ">

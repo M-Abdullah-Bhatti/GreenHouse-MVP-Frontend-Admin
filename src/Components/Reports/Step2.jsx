@@ -149,7 +149,7 @@ const Step2 = () => {
                   multiple
                 />
                 <img
-                  src="/assets/file_upload.svg"
+                  src="/assets/file_upload.png"
                   alt="file"
                   className="cursor-pointer"
                   onClick={handleFileClick}

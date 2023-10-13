@@ -46,13 +46,22 @@ const SentToRegulators = () => {
           </h1>
           <p className="text-[#6C7275] text-base mb-1 font-semibold">
             Jurisdiction :
-            <span className="text-[#000] font-semibold ml-2">Ireland</span>
+            <span className="text-[#000] font-semibold ml-2">
+              {" "}
+              {specificReportDetailsLoading
+                ? "loading..."
+                : specificReportDetailsData?.results?.jurisdiction &&
+                  specificReportDetailsData?.results?.jurisdiction}
+            </span>
           </p>
 
           <p className="text-[#6C7275] text-base font-semibold mb-1">
             Data sources: :
             <span className="text-[#000] font-semibold ml-2">
-              2022 Sustainability Report, Twitter post 2021
+              {specificReportDetailsLoading
+                ? "loading..."
+                : specificReportDetailsData?.results?.dataSources &&
+                  specificReportDetailsData?.results?.dataSources}
             </span>
           </p>
           {/* Links */}
@@ -61,7 +70,7 @@ const SentToRegulators = () => {
               <p className="mb-1 text-[#6C7275] text-base">
                 <span className="font-bold"> Hash: </span>
                 <a
-                  href={`https://gateway.pinata.cloud/ipfs/${
+                  href={`https://ipfs.io/ipfs/${
                     specificReportDetailsData?.results?.IPFSHash &&
                     specificReportDetailsData?.results?.IPFSHash
                   }`}
@@ -100,7 +109,7 @@ const SentToRegulators = () => {
         {/* Verdict */}
         <div className="bg-[#F3F5F7] p-3 rounded-md mb-7">
           <p className="text-[#6C7275] mb-3 font-semibold">
-            Summary of findings::
+            Summary of findings:
           </p>
           <p className="font-semibold">
             {" "}
